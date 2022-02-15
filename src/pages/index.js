@@ -13,8 +13,8 @@ const IndexPage = () => {
         <br></br>
 
         <button class="bg-green-500 text-white px-4 py-2 rounded">
-          <Link to="/stylespractice" class="text-3xl underline">
-            Go To Styles Practice Page
+          <Link to="/playground" class="text-3xl underline">
+            da playground 😳
           </Link>
         </button>
 
