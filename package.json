@@ -1,0 +1,22 @@
+{
+  "name": "unthink-frontend-playground",
+  "version": "1.0.0",
+  "private": true,
+  "description": "unthink-frontend-playground",
+  "author": "Nathan",
+  "keywords": [
+    "gatsby"
+  ],
+  "scripts": {
+    "develop": "gatsby develop",
+    "start": "gatsby develop",
+    "build": "gatsby build",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean"
+  },
+  "dependencies": {
+    "gatsby": "^4.7.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
+  }
+}
