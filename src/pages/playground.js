@@ -130,21 +130,16 @@ const PlaygroundPage = () => {
                             <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Ignore Fields</label>
 
                             <div class="relative flex">
-                                <select
-                                    id="select ignore"
-                                    name="fields[]"
-                                    multiple
-                                    placeholder="Select fields to ignore..."
-                                    autocomplete="off"
-                                    class="block w-full rounded-sm cursor-pointer focus:outline-none"
-                                    multile
-                                >
+                                <label class = "block">
+                                    <span class= "text-gray-700"> Select fields to ignore</span>
+                                    <select class= "block w-full mt-1 form-multiselect" multiple="">
                                     <option value="1" >Field 1</option>
                                     <option value="2" >Field 2</option>
                                     <option value="3" >Field 3</option>
                                     <option value="4" >Field 4</option>
                                     <option value="5" >Field 5</option>
                                 </select>
+                            </label>
                             </div>
 
                             {/*
