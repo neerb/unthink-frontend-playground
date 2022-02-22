@@ -131,6 +131,10 @@ const PlaygroundPage = () => {
 
 handleChange(event){
     let value = Arrary.from(event.target.selectedOptions, (options) => option.value );
+    this.state({
+        options: value,
+    });
+}
                         this.state = {
                             options: ["Field 1"],
                         };
