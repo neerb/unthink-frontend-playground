@@ -128,7 +128,12 @@ const PlaygroundPage = () => {
                         { /* Ignore fields section */}
                         <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
                             <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Ignore Fields</label>
-
+                            
+                            <Button
+                                type="primary"
+                                icon={<AppstoreAddOutlined />}
+                                onClick={handleAddFilteredFieldClick()}
+                            />
 
                         </div>
 
