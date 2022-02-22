@@ -131,8 +131,8 @@ const PlaygroundPage = () => {
 
                             <div class="relative flex">
                                 <label class = "block">
-                                    <span class= "text-gray-700"> Select fields to ignore</span>
-                                    <select class= "block w-full mt-1 form-multiselect" multiple="">
+                                    
+                                    <select class= "block w-full mt-1 form-multiselect" multiple="true">
                                     <option value="1" >Field 1</option>
                                     <option value="2" >Field 2</option>
                                     <option value="3" >Field 3</option>
