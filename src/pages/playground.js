@@ -124,9 +124,28 @@ const PlaygroundPage = () => {
                             </select>
                         </div>
 
+
                         { /* Ignore fields section */}
                         <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
                             <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Ignore Fields</label>
+
+handleChange(event){
+    let value = Arrary.from(event.target.selectedOptions, (options) => option.value );
+                        this.state = {
+                            options: ["Field 1"],
+                        };
+
+                            <select
+                                multiple={true}
+                                value={this.state.options}
+                                onChange={this.handleChange}
+                            >
+                            <option value = "Field 1"> Field 1</options>
+                            <option value = "Field 2"> Field 2</options>
+                            <option value = "Field 3"> Field 3</options>
+                            <option value = "Field 4"> Field 4</options>
+                            <option value = "Field 5"> Field 5</options>
+                            </select>
 
                             <Button
                                 type="primary"
