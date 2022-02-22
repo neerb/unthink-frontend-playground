@@ -3,6 +3,24 @@ import { Button, Upload } from 'antd'
 import { UploadOutlined } from '@ant-design/icons'
 
 export default function BrowseFileOrLink() {
+
+    const fileName = ''
+
+    const uploadFunction = (file) => {
+        const reader = new FileReader();
+
+        reader.onload = e => {
+            console.log(e.target.result);
+        };
+
+        console.log("File name: " + file);
+
+        reader.readAsText(file);
+
+        // Prevent upload
+        return false;
+    }
+
     return (
         <div>
             <div class="border border-dashed border-gray-500 relative">
@@ -12,8 +30,12 @@ export default function BrowseFileOrLink() {
                         Drop files anywhere to upload
                         <br />or
                     </h4>
-                    <Upload>
-                        <Button type='primary' shape="round">
+                    <Upload accept='.csv, .xlsx, .xml'
+                        showUploadList={false}
+                        beforeUpload={file => {
+                            uploadFunction(file)
+                        }}>
+                        <Button type='upload' shape="round">
                             <UploadOutlined />Upload
                         </Button>
                     </Upload>
