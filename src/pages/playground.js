@@ -146,10 +146,7 @@ const PlaygroundPage = () => {
                                     <option value="5" >Field 5</option>
                                 </select>
                             </div>
-                            <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
-                            <script>
-                              new TomSelect('#select-role', {
-                                maxItems: 3,
+
                             {/*
                             <Button
                                 type="primary"
