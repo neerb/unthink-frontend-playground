@@ -74,9 +74,9 @@ const PlaygroundPage = () => {
                             <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Category</label>
 
                             <select name="selectList" id="selectList" class="mb-3 mx-4 w-3/4">
-                                <option value="item 1">Item 1</option>
-                                <option value="item 2">Item 2</option>
-                                <option value="item 3">Item 3</option>
+                                <option value="Object 1">Item 1</option>
+                                <option value="Object 2">Item 2</option>
+                                <option value="Object 3">Item 3</option>
                             </select>
                         </div>
 
