@@ -31,6 +31,9 @@ const PlaygroundPage = () => {
 
     }
 
+    function onSubmit() {
+
+    }
 
     return (
 
@@ -47,26 +50,6 @@ const PlaygroundPage = () => {
                         <h1 class="text-gray-800 font-lg font-bold tracking-normal leading-tight mb-4 text-2xl">Unthink AI Product Upload</h1>
 
                         { /* Upload file/drag or enter link */}
-                        <div class='flex px-5 pb-4' >
-                            <Row>
-                                <Space>
-                                    <Col>
-                                        <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Upload file</label>
-                                    </Col>
-                                    <Col>
-                                        <Input placeholder="Enter link here..." class='' />
-                                    </Col>
-                                    <Col>
-                                        <Upload>
-                                            <Button type='primary' shape="round">
-                                                <UploadOutlined />Upload
-                                            </Button>
-                                        </Upload>
-                                    </Col>
-                                </Space>
-                            </Row>
-                        </div>
-
                         <BrowseFileOrLink class=''></BrowseFileOrLink>
 
                         { /* Category Drop Down */}
@@ -74,9 +57,9 @@ const PlaygroundPage = () => {
                             <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Category</label>
 
                             <select name="selectList" id="selectList" class="mb-3 mx-4 w-3/4">
-                                <option value="Object 1">Item 1</option>
-                                <option value="Object 2">Item 2</option>
-                                <option value="Object 3">Item 3</option>
+                                <option value="item 1">Item 1</option>
+                                <option value="item 2">Item 2</option>
+                                <option value="item 3">Item 3</option>
                             </select>
                         </div>
 
@@ -130,16 +113,16 @@ const PlaygroundPage = () => {
                             <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Ignore Fields</label>
 
                             <div class="relative flex">
-                                <label class = "block">
-                                    
-                                    <select class= "block w-full mt-1 form-multiselect" multiple="true">
-                                    <option value="1" >Field 1</option>
-                                    <option value="2" >Field 2</option>
-                                    <option value="3" >Field 3</option>
-                                    <option value="4" >Field 4</option>
-                                    <option value="5" >Field 5</option>
-                                </select>
-                            </label>
+                                <label class="block">
+
+                                    <select class="block w-full mt-1 form-multiselect" multiple="true">
+                                        <option value="1" >Field 1</option>
+                                        <option value="2" >Field 2</option>
+                                        <option value="3" >Field 3</option>
+                                        <option value="4" >Field 4</option>
+                                        <option value="5" >Field 5</option>
+                                    </select>
+                                </label>
                             </div>
 
                             {/*
