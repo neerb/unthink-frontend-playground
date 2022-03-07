@@ -4,48 +4,41 @@ import { UploadOutlined } from '@ant-design/icons'
 import { Input, Space, Row, Col } from 'antd'
 import readXlsxFile from 'read-excel-file'
 
-export default function BrowseFileOrLink() {
+export default function BrowseFileOrLink({ childToParent, setIsFileUploaded }) {
 
     const [selectedFile, setSelectedFile] = useState();
     const [isFilePicked, setIsFilePicked] = useState(false);
-    const columnNameList = useState([]);
+    let columnNameList = [];
 
     //const readXlsxFile = require('read-excel-file/node')
 
     const changeHandler = (event) => {
+        setIsFileUploaded(true);
+        childToParent(event.target.files[0]);
         setSelectedFile(event.target.files[0]);
 
-        console.log(event.target.files[0])
 
+        //console.log(event.target.files[0])
+
+        /*
         readXlsxFile(event.target.files[0]).then((rows) => {
 
             console.log(rows);
-            let firstRow = true;
 
-            for (const r of rows) {
-                columnNameList.push(r);
-
-                if (firstRow) {
-                    for (const cname of r) {
-                        columnNameList.push(cname);
-                        console.log(cname);
-                    }
-
-
-                    firstRow = false;
-                }
-                else {
-
-                }
+            for (const cname of rows[0]) {
+                columnNameList.push(cname);
+                console.log(cname);
             }
-
         })
 
-
-
+        for (const cname of columnNameList) {
+            //console.log(cname);
+        }
+        childToParent(event.target.files[0]);
+        console.log("Function called, size of list is: " + columnNameList.length)
 
         setIsFilePicked(true)
-
+        */
     };
 
     const handleFileInput = (e) => {
