@@ -4,6 +4,12 @@ import { UploadOutlined } from '@ant-design/icons'
 import { Input, Space, Row, Col } from 'antd'
 import readXlsxFile from 'read-excel-file'
 
+/*
+In the "BrowseFileOrLink.js" react component you'll see a method called changeHandler, in that function the readXlsx file 
+gets parsed and returns an array of rows to which I take the first row to get all of the column names and store them into 
+a list called columnNameList. The next step is gonna be mapping all of those column names from that list to the dropdown boxes
+*/
+
 export default function BrowseFileOrLink() {
 
     const [selectedFile, setSelectedFile] = useState();
@@ -31,6 +37,18 @@ export default function BrowseFileOrLink() {
                         console.log(cname);
                     }
 
+                var select = document.getElementById("selectCat") 
+                for(var i = 3; i < columnNameList.length; i++) //this for loop is for mapping dropdown options
+                { //starts at i=3 bc first 4 were not part of columns of xcel
+                    var cat = columnNameList[i];
+                    var element = document.createElement("option");
+                    element.textContent = cat;
+                    element.value = cat;
+                    select.appendChild(element);
+        
+                } //end of for loop
+
+
 
                     firstRow = false;
                 }
@@ -38,6 +56,8 @@ export default function BrowseFileOrLink() {
 
                 }
             }
+
+
 
         })
 
@@ -105,6 +125,18 @@ export default function BrowseFileOrLink() {
                     <p>Select a file to show details</p>
                 )}
             </div>
+        
+        <div class='flex px-5 pb-2'>
+        <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Category</label>
+        <select id="selectCat" class="mb-3 mx-4 w-3/4">
+            <option value="category">Select</option>
+        </select>
+        
+
+
+        
+        </div>
+
 
         </div >
     )
