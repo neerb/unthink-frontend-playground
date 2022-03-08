@@ -4,7 +4,7 @@ import { UploadOutlined } from '@ant-design/icons'
 import { Input, Space, Row, Col } from 'antd'
 import readXlsxFile from 'read-excel-file'
 
-export default function BrowseFileOrLink({ childToParent, setIsFileUploaded }) {
+export default function BrowseFileOrLink({ childToParent }) {
 
     const [selectedFile, setSelectedFile] = useState();
     const [isFilePicked, setIsFilePicked] = useState(false);
@@ -13,7 +13,7 @@ export default function BrowseFileOrLink({ childToParent, setIsFileUploaded }) {
     //const readXlsxFile = require('read-excel-file/node')
 
     const changeHandler = (event) => {
-        setIsFileUploaded(true);
+        setIsFilePicked(true);
         childToParent(event.target.files[0]);
         setSelectedFile(event.target.files[0]);
 
@@ -48,7 +48,7 @@ export default function BrowseFileOrLink({ childToParent, setIsFileUploaded }) {
     };
 
     return (
-        <div>
+        <div class="">
             <div class='flex px-5 pb-4' >
                 <Row>
                     <Space>
@@ -81,7 +81,7 @@ export default function BrowseFileOrLink({ childToParent, setIsFileUploaded }) {
             </div>
             <div class="flex justify-center">
                 {isFilePicked ? (
-                    <div>
+                    <div class="text-center">
                         <p>Filename: {selectedFile.name}</p>
                         <p>Filetype: {selectedFile.type}</p>
                         <p>Size in bytes: {selectedFile.size}</p>
