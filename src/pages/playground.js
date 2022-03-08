@@ -29,12 +29,19 @@ class PlaygroundPage extends Component {
     state = {
         columnNameArray: [],
         uploadFile: null,
-        isFileUploaded: true,
-        count: 0
+        isFileUploaded: false,
+        count: 0,
+        categoryField: null,
+        subcategoriesField: null,
+        topLevelCategoryField: null,
+        priceField: null,
+        mfrCodeField: null,
+        ignoreFieldsList: [],
+        filterFieldsList: []
     }
 
     childToParent = (childData) => {
-        this.setState({ uploadFile: childData }, () => {
+        this.setState({ uploadFile: childData, isFileUploaded: true }, () => {
             console.log(this.state.uploadFile);
             if (this.state.isFileUploaded && this.state.uploadFile) {
                 readXlsxFile(this.state.uploadFile).then((rows) => {
@@ -70,137 +77,192 @@ class PlaygroundPage extends Component {
 
     }
 
-
-    setIsFileUploaded = (uploaded) => {
-        console.log("uploaded = " + uploaded)
-        this.setState({ isFileUploaded: uploaded })
-    }
-
     submitButton = () => {
         console.log("bruh")
         for (const cname of this.state.columnNameArray) {
             console.log(cname);
         }
-
-        this.setState({ columnNameArray: this.state.columnNameArray })
-
     }
 
+    onCategoryFieldChange = (e) => {
+        this.setState({ categoryField: e.target.value }, () => {
+            console.log("change");
+        });
+    }
+
+    onSubcategoriesFieldChange = (e) => {
+        this.setState({ subcategoriesField: e.target.value }, () => {
+            console.log("change");
+        });
+    }
+
+    onTopLevelCategoryFieldChange = (e) => {
+        this.setState({ topLevelCategoryField: e.target.value }, () => {
+            console.log("change");
+        });
+    }
+
+    onPriceFieldChange = (e) => {
+        this.setState({ priceField: e.target.value }, () => {
+            console.log("change");
+        });
+    }
+
+    onMFRCodeFieldChange = (e) => {
+        this.setState({ mfrCodeField: e.target.value }, () => {
+            console.log("change");
+        });
+    }
+
+    onIgnoreFieldsChange = (e) => {
+        var options = e.target.options;
+        var value = [];
+        for (var i = 0, l = options.length; i < l; i++) {
+            if (options[i].selected) {
+                value.push(options[i].value);
+            }
+        }
+
+        this.setState({ ignoreFieldsList: value }, () => {
+            console.log(this.state.ignoreFieldsList);
+        });
+    }
+
+    onFilterFieldsChange = (e) => {
+        var options = e.target.options;
+        var value = [];
+        for (var i = 0, l = options.length; i < l; i++) {
+            if (options[i].selected) {
+                value.push(options[i].value);
+            }
+        }
+
+        this.setState({ filterFieldsList: value }, () => {
+            console.log(this.state.filterFieldsList);
+        });
+    }
 
     render() {
         return (
 
-            <div class="screen bg-amber-400"> {/* Example of full screen coloring with "screen" class (indigo 400)*/}
+            <div class="screen bg-gradient-to-r from-amber-500 to-rose-900"> {/* Example of full screen coloring with "screen" class (indigo 400)*/}
 
                 <div class="py-12 transition duration-150 ease-in-out z-10 top-0 right-0 bottom-0 left-0" id="modal">
                     <h1 class='text-7xl center-self mt-6 mb-10 place-self-stretch'>
                         😳 playground 😳
                     </h1>
-                    <div role="alert" class="container mx-auto w-3/6 max-w-lg">
+                    <div role="alert" class="container mx-auto w-4/6 max-w-2xl">
                         <div class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400"> {/* Show color change here */}
 
                             { /* Title Card */}
                             <h1 class="text-gray-800 font-lg font-bold tracking-normal leading-tight mb-4 text-2xl">Unthink AI Product Upload</h1>
 
                             { /* Upload file/drag or enter link */}
-                            <BrowseFileOrLink childToParent={this.childToParent} setIsFileUploaded={this.setIsFileUploaded}></BrowseFileOrLink>
+                            <BrowseFileOrLink childToParent={this.childToParent} ></BrowseFileOrLink>
 
-                            { /* Category Drop Down */}
-                            <div class='flex px-5 pb-2 pt-5' >
-                                <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Category</label>
+                            <div class="grid cols-2">
+                                { /* Category Drop Down */}
+                                <div class='flex px-5 pb-2 pt-5' >
+                                    <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Category</label>
 
-                                <select name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 justify-right">
-                                    {this.state.columnNameArray.map((cname) => {
-                                        return <option key={cname} value={cname}>{cname}</option>
-                                    })}
-                                </select>
-                            </div>
-
-                            { /* Subcategories Drop Down */}
-                            <div class='flex px-5 pb-2' >
-                                <label for="dropdownboxes" className="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Subcategories</label>
-
-                                <select name="selectList" id="selectList" class="mb-3 mx-4 w-3/4">
-                                    {this.state.columnNameArray.map((cname) => {
-                                        return <option key={cname} value={cname}>{cname}</option>
-                                    })}
-                                </select>
-                            </div>
-
-                            { /* Top-level Category Drop Down */}
-                            <div class='flex px-5 pb-2' >
-                                <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Top-Level Category</label>
-
-                                <select name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0">
-                                    {this.state.columnNameArray.map((cname) => {
-                                        return <option key={cname} value={cname}>{cname}</option>
-                                    })}
-                                </select>
-                            </div>
-
-                            { /* Price Drop Down */}
-                            <div class='flex px-5 pb-2' >
-                                <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Price</label>
-
-                                <select name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0">
-                                    {this.state.columnNameArray.map((cname) => {
-                                        return <option key={cname} value={cname}>{cname}</option>
-                                    })}
-                                </select>
-                            </div>
-
-                            { /* mfr_code Drop Down */}
-                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
-                                <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">MFR Code</label>
-
-                                <select name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0">
-                                    {this.state.columnNameArray.map((cname) => {
-                                        return <option key={cname} value={cname}>{cname}</option>
-                                    })}
-                                </select>
-                            </div>
-
-
-                            { /* Ignore fields section */}
-                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
-                                <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Ignore Fields</label>
-
-                                <div class="relative flex">
-                                    <label class="block">
-
-                                        <select class="block w-full mt-1 form-multiselect" multiple="true">
-                                            {this.state.columnNameArray.map((cname) => {
-                                                return <option key={cname} value={cname}>{cname}</option>
-                                            })}
-                                        </select>
-                                    </label>
+                                    <select onChange={this.onCategoryFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4" disabled={!this.state.isFileUploaded ? true : null}>
+                                        {this.state.columnNameArray.map((cname) => {
+                                            return <option key={cname} value={cname}>{cname}</option>
+                                        })}
+                                    </select>
                                 </div>
 
-                                {/*
+                                { /* Subcategories Drop Down */}
+                                <div class='flex px-5 pb-2' >
+                                    <label for="dropdownboxes" className="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Subcategories</label>
+
+                                    <select onChange={this.onSubcategoriesFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4" disabled={!this.state.isFileUploaded ? true : null}>
+                                        {this.state.columnNameArray.map((cname) => {
+                                            return <option key={cname} value={cname}>{cname}</option>
+                                        })}
+                                    </select>
+                                </div>
+
+                                { /* Top-level Category Drop Down */}
+                                <div class='flex px-5 pb-2' >
+                                    <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Top-Level Category</label>
+
+                                    <select onChange={this.onTopLevelCategoryFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0" disabled={!this.state.isFileUploaded ? true : null}>
+                                        {this.state.columnNameArray.map((cname) => {
+                                            return <option key={cname} value={cname}>{cname}</option>
+                                        })}
+                                    </select>
+                                </div>
+
+                                { /* Price Drop Down */}
+                                <div class='flex px-5 pb-2' >
+                                    <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Price</label>
+
+                                    <select onChange={this.onPriceFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0" disabled={!this.state.isFileUploaded ? true : null}>
+                                        {this.state.columnNameArray.map((cname) => {
+                                            return <option key={cname} value={cname}>{cname}</option>
+                                        })}
+                                    </select>
+                                </div>
+
+                                { /* mfr_code Drop Down */}
+                                <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                    <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">MFR Code</label>
+
+                                    <select onChange={this.onMFRCodeFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0" disabled={!this.state.isFileUploaded ? true : null}>
+                                        {this.state.columnNameArray.map((cname) => {
+                                            return <option key={cname} value={cname}>{cname}</option>
+                                        })}
+                                    </select>
+                                </div>
+
+
+                                { /* Ignore fields section */}
+                                <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                    <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Ignore Fields</label>
+
+                                    <div class="relative flex w-full">
+                                        <label class="w-full">
+
+                                            <select onChange={this.onIgnoreFieldsChange} class="w-full block mt-1 form-multiselect" multiple="true" disabled={!this.state.isFileUploaded ? true : null}>
+                                                {this.state.columnNameArray.map((cname) => {
+                                                    return <option key={cname} value={cname}>{cname}</option>
+                                                })}
+                                            </select>
+                                        </label>
+                                    </div>
+
+                                    {/*
                             <Button
                                 type="primary"
                                 icon={<AppstoreAddOutlined />}
                                 onClick={handleAddFilteredFieldClick()}
                             />
                             */}
-                            </div>
+                                </div>
 
-                            { /* Filter fields section */}
-                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
-                                <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Filter Fields</label>
+                                { /* Filter fields section */}
+                                <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                    <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Filter Fields</label>
 
-                                <Button
-                                    type="primary"
-                                    icon={<AppstoreAddOutlined />}
+                                    <div class="relative flex w-full">
+                                        <label class="w-full">
 
-                                />
+                                            <select onChange={this.onFilterFieldsChange} class="block w-full mt-1 form-multiselect" multiple="true" disabled={!this.state.isFileUploaded ? true : null}>
+                                                {this.state.columnNameArray.map((cname) => {
+                                                    return <option key={cname} value={cname}>{cname}</option>
+                                                })}
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
 
 
 
 
                             { /* Submit and cancel buttons */}
-                            <div class="flex items-center justify-start w-full">
+                            <div class="flex items-center justify-center w-full">
                                 <button onClick={this.submitButton} class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-emerald-700 rounded text-white px-8 py-2 text-sm mt-6">
                                     Submit
                                 </button>
@@ -209,6 +271,31 @@ class PlaygroundPage extends Component {
                                         Cancel (returns to index page)
                                     </Link>
                                 </button>
+                            </div>
+
+                            <div class="mt-10 grid cols-1 items-center justify-start w-full">
+                                <h1>Mappings</h1>
+                                <p class="ml-4">
+                                    Category: <b>{this.state.categoryField}</b>
+                                </p>
+                                <p class="ml-4">
+                                    Subcategories: <b>{this.state.subcategoriesField}</b>
+                                </p>
+                                <p class="ml-4">
+                                    Top-Level Category: <b>{this.state.topLevelCategoryField}</b>
+                                </p>
+                                <p class="ml-4">
+                                    Price: <b>{this.state.priceField}</b>
+                                </p>
+                                <p class="ml-4">
+                                    MFR Code: <b>{this.state.mfrCodeField}</b>
+                                </p>
+                                <p class="ml-4">
+                                    Ignore Fields: <b>{this.state.ignoreFieldsList}</b>
+                                </p>
+                                <p class="ml-4">
+                                    Filter Fields: <b>{this.state.filterFieldsList}</b>
+                                </p>
                             </div>
 
                             { /* Exit button */}
