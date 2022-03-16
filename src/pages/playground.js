@@ -7,7 +7,7 @@ import { UploadOutlined, AppstoreAddOutlined } from '@ant-design/icons'
 import readXlsxFile from 'read-excel-file'
 import { render } from 'react-dom'
 import reactDom from 'react-dom'
-
+import Papa from 'papaparse'
 
 
 const { SubMenu } = Menu;
@@ -50,27 +50,58 @@ function PlaygroundPage() {
         console.log(uploadFile);
         if (isFileUploaded && uploadFile) {
 
+            if (uploadFile.name.endsWith('.xlsx')) {
+                console.log("Currently looking at " + uploadFile.name); //this.state.uploadFile.name will show uploaded file name. testing
+                console.log("input file is xlsx");
+                readXlsxFile(uploadFile).then((rows) => {
 
-            readXlsxFile(uploadFile).then((rows) => {
+                    console.log(rows);
+                    console.log("size row: " + rows[0].length);
+                    let tempArray = [];
 
-                console.log(rows);
-                console.log("size row: " + rows[0].length);
-                let tempArray = [];
+                    for (const cname of rows[0]) {
+                        tempArray.push(cname);
+                        console.log(cname);
+                    }
 
-                for (const cname of rows[0]) {
-                    tempArray.push(cname);
-                    console.log(cname);
-                }
+                    setColumnNameArray([...tempArray]);
+                    console.log("size list: " + columnNameArray.length);
+                }) //end of readXlsxFile
+            } //end of if xlsx
 
-                setColumnNameArray([...tempArray]);
-                console.log("size list: " + columnNameArray.length);
-            })
+            if (uploadFile.name.endsWith('.csv')) {
+                console.log("Currently looking at " + uploadFile.name); //uploadFile.name will show uploaded file name. testing
+                console.log("input file is csv");
+
+
+                Papa.parse(uploadFile, {
+                    header: false, //header needs to be false or data is objects rather than array
+                    complete: function (row) {
+                        console.log("Parsing complete:", row.data);
+                        console.log("row size " + row.data[0].length);
+                        console.log("row[0] is " + row.data[0]); //first row
+                        let tempArray = [];
+
+                        for (const cname of row.data[0]) {
+                            tempArray.push(cname);
+                            console.log(cname);
+                        } //end of for loop
+
+                        setColumnNameArray([...tempArray]);
+                        console.log("size list: " + columnNameArray.length);
+
+                    } //end of complete
+                }) //end of papa parse
+
+
+            } //end of if csv 
 
 
             for (const cname of columnNameArray) {
                 console.log(cname);
             }
-        }
+
+        } //end of big if statement
     }, [uploadFile]);
 
     const childToParent = (childData) => {
