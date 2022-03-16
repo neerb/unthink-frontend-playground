@@ -8,43 +8,13 @@ export default function BrowseFileOrLink({ childToParent }) {
 
     const [selectedFile, setSelectedFile] = useState();
     const [isFilePicked, setIsFilePicked] = useState(false);
-    let columnNameList = [];
 
     //const readXlsxFile = require('read-excel-file/node')
 
     const changeHandler = (event) => {
         setIsFilePicked(true);
-        childToParent(event.target.files[0]);
         setSelectedFile(event.target.files[0]);
-
-
-        //console.log(event.target.files[0])
-
-        /*
-        readXlsxFile(event.target.files[0]).then((rows) => {
-            console.log(rows);
-            for (const cname of rows[0]) {
-                columnNameList.push(cname);
-                console.log(cname);
-            }
-        })
-        for (const cname of columnNameList) {
-            //console.log(cname);
-        }
         childToParent(event.target.files[0]);
-        console.log("Function called, size of list is: " + columnNameList.length)
-        setIsFilePicked(true)
-        */
-    };
-
-    const handleFileInput = (e) => {
-        // handle validations
-        //onFileSelect(e.target.files[0])
-
-
-    }
-
-    const handleSubmission = () => {
     };
 
     return (
