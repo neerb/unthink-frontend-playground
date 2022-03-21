@@ -6,16 +6,30 @@ import readXlsxFile from 'read-excel-file'
 
 export default function BrowseFileOrLink({ childToParent }) {
 
-    const [selectedFile, setSelectedFile] = useState();
+    const [selectedFile, setSelectedFile] = useState(null);
     const [isFilePicked, setIsFilePicked] = useState(false);
+    const [isURLfile, setIsURLfile] = useState(false);
 
     //const readXlsxFile = require('read-excel-file/node')
 
     const changeHandler = (event) => {
         setIsFilePicked(true);
-        setSelectedFile(event.target.files[0]);
+        setSelectedFile(event.target.files[0], false);
         childToParent(event.target.files[0]);
     };
+
+    const getURLdownload = (event) => {
+        if (event.target.value) {
+            console.log("BFOL: " + event.target.value);
+            setIsFilePicked(false);
+            setIsURLfile(true);
+            setSelectedFile(event.target.value, true);
+            childToParent(event.target.value);
+        }
+        else {
+            setIsURLfile(false);
+        }
+    }
 
     return (
         <div class="">
@@ -27,11 +41,11 @@ export default function BrowseFileOrLink({ childToParent }) {
                             <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Upload file</label>
                         </Col>
                         <Col>
-                            <Input placeholder="Enter link here..." class='' />
+                            <Input onChange={getURLdownload} type="text" placeholder="Enter link here..." class='' />
                         </Col>
 
                         <Col>
-                            <input type="file" onChange={changeHandler}></input>
+                            <input type="file" onChange={changeHandler} disabled={isURLfile ? true : null}></input>
                             {/*<button onClick={e => fileInput.current && fileInput.current.click()} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" />
                             
                             <Upload accept='.csv, .xlsx, .xml'
@@ -50,7 +64,7 @@ export default function BrowseFileOrLink({ childToParent }) {
                 </Row>
             </div>
             <div class="flex justify-center">
-                {isFilePicked ? (
+                {isFilePicked && !isURLfile ? (
                     <div class="text-center">
                         <p>Filename: {selectedFile.name}</p>
                         <p>Filetype: {selectedFile.type}</p>

@@ -36,7 +36,8 @@ function PlaygroundPage() {
 
     const [columnNameArray, setColumnNameArray] = useState([]);
     const [uploadFile, setUploadFile] = useState();
-    const [isFileUploaded, setIsFileUploded] = useState();
+    //const [uploadFileURL, setUploadFileURL] = useState();
+    const [isFileUploaded, setIsFileUploaded] = useState();
     const [count, setCount] = useState();
     const [categoryField, setCategoryField] = useState();
     const [subcategoriesField, setSubCategoriesField] = useState();
@@ -46,10 +47,30 @@ function PlaygroundPage() {
     const [ignoreFieldsList, setIgnoreFieldsList] = useState();
     const [filterFieldsList, setFilterFieldsList] = useState();
 
+    const [fileFormData, setFileFormData] = useState();
+    const [mapFormData, setMapFormData] = useState();
+
+    //const [isURLfile, setIsURLfile] = useState();
+
     React.useEffect(() => {
         console.log(uploadFile);
-        if (isFileUploaded && uploadFile) {
 
+
+        if (!(uploadFile instanceof File)) {
+            console.log("BRUHUHRHUH");
+            let url = uploadFile;
+            /*
+            fetch(url)
+                .then((res) => { return res.blob(); })
+                .then((data) => {
+                    var a = document.createElement("a");
+                    a.href = window.URL.createObjectURL(data);
+                    a.download = "FILENAME";
+                    a.click();
+                });
+                */
+        }
+        else if (isFileUploaded && uploadFile) {
             if (uploadFile.name.endsWith('.xlsx')) {
                 console.log("Currently looking at " + uploadFile.name); //this.state.uploadFile.name will show uploaded file name. testing
                 console.log("input file is xlsx");
@@ -63,13 +84,31 @@ function PlaygroundPage() {
                         tempArray.push(cname);
                         console.log(cname);
                     }
-
                     setColumnNameArray([...tempArray]);
                     console.log("size list: " + columnNameArray.length);
+
+                    /*
+                    let columnMapCount = 0;
+                    let rowCount = 1;
+                    setFileFormData(new FormData());
+
+                    while (rows[rowCount]) {
+                        for (const cell of rows[rowCount]) {
+                            fileFormData.append(columnNameArray[columnMapCount], cell);
+                            columnMapCount++;
+                        }
+
+                        columnMapCount = 0;
+                        rowCount++;
+                    }
+
+                    for (var value of fileFormData.values()) {
+                        console.log(value);
+                    }
+                    */
                 }) //end of readXlsxFile
             } //end of if xlsx
-
-            if (uploadFile.name.endsWith('.csv')) {
+            else if (uploadFile.name.endsWith('.csv')) {
                 console.log("Currently looking at " + uploadFile.name); //uploadFile.name will show uploaded file name. testing
                 console.log("input file is csv");
 
@@ -104,9 +143,12 @@ function PlaygroundPage() {
         } //end of big if statement
     }, [uploadFile]);
 
-    const childToParent = (childData) => {
+    const childToParent = (childData, isURL) => {
         setUploadFile(childData);
-        setIsFileUploded(true);
+        setIsFileUploaded(true);
+
+
+        //setIsFileUploaded(false);
 
 
         /*
@@ -121,10 +163,31 @@ function PlaygroundPage() {
     }
 
     const submitButton = () => {
-        console.log("bruh")
-        for (const cname of columnNameArray) {
-            console.log(cname);
+        /*
+            Form Data Creation Here
+        */
+        var submitFormData = new FormData();
+        submitFormData.append("category", categoryField);
+        submitFormData.append("subcategories", subcategoriesField);
+        submitFormData.append("top-level-category", topLevelCategoryField);
+        submitFormData.append("price", priceField);
+        submitFormData.append("MFRCode", mfrCodeField);
+        setMapFormData(submitFormData);
+
+        // Also need for ignore and filter fields
+        //mapFormData.append("category", );
+        //mapFormData.append("category", );
+
+        for (var value of mapFormData.values()) {
+            console.log(value);
         }
+
+        /*
+            API Requests here
+        */
+        var request = new XMLHttpRequest();
+        //request.open("POST", "http://foo.com/submitform.php");
+        //request.send(formData);
     }
 
     const onCategoryFieldChange = (e) => {
