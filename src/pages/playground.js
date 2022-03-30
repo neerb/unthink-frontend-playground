@@ -50,6 +50,11 @@ function PlaygroundPage() {
     const [fileFormData, setFileFormData] = useState();
     const [mapFormData, setMapFormData] = useState();
 
+    const [categorySeparator, setCategorySeparator] = useState();
+    const [subcategorySeparator, setSubcategorySeparator] = useState();
+    const [topLevelSeparator, setTopLevelSeparator] = useState();
+    //const [Separators, setSeparators] = useState(false); //used for submit button to show separators
+
     //const [isURLfile, setIsURLfile] = useState();
 
     React.useEffect(() => {
@@ -169,6 +174,11 @@ function PlaygroundPage() {
         submitFormData.append("top-level-category", topLevelCategoryField);
         submitFormData.append("price", priceField);
         submitFormData.append("MFRCode", mfrCodeField);
+        
+        submitFormData.append("categorySeparator", categorySeparator);
+        submitFormData.append("subcategorySeparator", subcategorySeparator);
+        submitFormData.append("top-levelcategorySeparator", topLevelSeparator);
+        
         setMapFormData(submitFormData);
 
         // Also need for ignore and filter fields
@@ -240,6 +250,21 @@ function PlaygroundPage() {
         }
     }
 
+    function categorySeparatorFieldChange(val)
+    {
+        setCategorySeparator(val.target.value) //get value of textbox
+    }
+    
+    function subcategorySeparatorFieldChange(val)
+    {
+        setSubcategorySeparator(val.target.value)
+    }
+
+    function topLevelSeparatorFieldChange(val)
+    {
+        setTopLevelSeparator(val.target.value)
+    }
+
 
     return (
 
@@ -269,6 +294,12 @@ function PlaygroundPage() {
                                     })}
                                 </select>
                             </div>
+                            
+                            {/*Category Separator*/}
+                            <div class='flex px-5 pb-2' >
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Category Separator</label>
+                                <input type = "text" onChange={categorySeparatorFieldChange}></input>
+                            </div>
 
                             { /* Subcategories Drop Down */}
                             <div class='flex px-5 pb-2' >
@@ -281,6 +312,12 @@ function PlaygroundPage() {
                                 </select>
                             </div>
 
+                            {/*Subcategory Separator*/}
+                            <div class='flex px-5 pb-2' >
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Subcategory Separator</label>
+                                <input type = "text" onChange={subcategorySeparatorFieldChange}></input>
+                            </div>
+
                             { /* Top-level Category Drop Down */}
                             <div class='flex px-5 pb-2' >
                                 <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Top-Level Category</label>
@@ -290,6 +327,12 @@ function PlaygroundPage() {
                                         return <option key={cname} value={cname}>{cname}</option>
                                     })}
                                 </select>
+                            </div>
+
+                            {/*Top-level Separator*/}
+                            <div class='flex px-5 pb-2' >
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Top-Level Category Separator</label>
+                                <input type = "text" onChange={topLevelSeparatorFieldChange}></input>
                             </div>
 
                             { /* Price Drop Down */}
@@ -377,10 +420,19 @@ function PlaygroundPage() {
                                 Category: <b>{categoryField}</b>
                             </p>
                             <p class="ml-4">
+                                Category Separator: <b>{categorySeparator}</b>
+                            </p>
+                            <p class="ml-4">
                                 Subcategories: <b>{subcategoriesField}</b>
                             </p>
                             <p class="ml-4">
+                                Subategory Separator: <b>{subcategorySeparator}</b>
+                            </p>
+                            <p class="ml-4">
                                 Top-Level Category: <b>{topLevelCategoryField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Top-Level Category Separator: <b>{topLevelSeparator}</b>
                             </p>
                             <p class="ml-4">
                                 Price: <b>{priceField}</b>
