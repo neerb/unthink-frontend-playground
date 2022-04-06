@@ -1,9 +1,13 @@
-import * as React from "react"
+import React, { Component, useState, useRef, useEffect } from 'react'
 import { Menu, Dropdown, Icon, Upload, Divider } from 'antd'
 import { Link } from 'gatsby'
 import BrowseFileOrLink from './components/BrowseFileOrLink'
 import { Input, Button, Space, Row, Col } from 'antd'
 import { UploadOutlined, AppstoreAddOutlined } from '@ant-design/icons'
+import readXlsxFile from 'read-excel-file'
+import { render } from 'react-dom'
+import reactDom from 'react-dom'
+import Papa from 'papaparse'
 
 
 const { SubMenu } = Menu;
@@ -21,153 +25,386 @@ const menu = (
     </Menu>
 );
 
+const defaultState = {
 
-const PlaygroundPage = () => {
-    function handleAddIgnoredFieldClick() {
+}
+
+
+
+
+function PlaygroundPage() {
+
+    const [columnNameArray, setColumnNameArray] = useState([]);
+    const [uploadFile, setUploadFile] = useState();
+    //const [uploadFileURL, setUploadFileURL] = useState();
+    const [isFileUploaded, setIsFileUploaded] = useState();
+    const [count, setCount] = useState();
+    const [categoryField, setCategoryField] = useState();
+    const [subcategoriesField, setSubCategoriesField] = useState();
+    const [topLevelCategoryField, setTopLevelCategoryField] = useState();
+    const [priceField, setPriceField] = useState();
+    const [mfrCodeField, setMfrCodeField] = useState();
+    const [ignoreFieldsList, setIgnoreFieldsList] = useState();
+    const [filterFieldsList, setFilterFieldsList] = useState();
+
+    const [fileFormData, setFileFormData] = useState();
+    const [mapFormData, setMapFormData] = useState();
+
+    const [categorySeparator, setCategorySeparator] = useState();
+    const [subcategorySeparator, setSubcategorySeparator] = useState();
+    const [topLevelSeparator, setTopLevelSeparator] = useState();
+    //const [Separators, setSeparators] = useState(false); //used for submit button to show separators
+
+    //const [isURLfile, setIsURLfile] = useState();
+
+    React.useEffect(() => {
+        console.log(uploadFile);
+
+
+        if (!(uploadFile instanceof File)) {
+            console.log("BRUHUHRHUH");
+            let url = uploadFile;
+            /*
+            fetch(url)
+                .then((res) => { return res.blob(); })
+                .then((data) => {
+                    var a = document.createElement("a");
+                    a.href = window.URL.createObjectURL(data);
+                    a.download = "FILENAME";
+                    a.click();
+                });
+                */
+        }
+        else if (isFileUploaded && uploadFile) {
+            if (uploadFile.name.endsWith('.xlsx')) {
+                console.log("Currently looking at " + uploadFile.name); //this.state.uploadFile.name will show uploaded file name. testing
+                console.log("input file is xlsx");
+                readXlsxFile(uploadFile).then((rows) => {
+
+                    console.log(rows);
+                    console.log("size row: " + rows[0].length);
+                    let tempArray = [];
+
+                    for (const cname of rows[0]) {
+                        tempArray.push(cname);
+                        console.log(cname);
+                    }
+                    setColumnNameArray([...tempArray]);
+                    console.log("size list: " + columnNameArray.length);
+
+                    /*
+                    let columnMapCount = 0;
+                    let rowCount = 1;
+                    setFileFormData(new FormData());
+                    while (rows[rowCount]) {
+                        for (const cell of rows[rowCount]) {
+                            fileFormData.append(columnNameArray[columnMapCount], cell);
+                            columnMapCount++;
+                        }
+                        columnMapCount = 0;
+                        rowCount++;
+                    }
+                    for (var value of fileFormData.values()) {
+                        console.log(value);
+                    }
+                    */
+                }) //end of readXlsxFile
+            } //end of if xlsx
+            else if (uploadFile.name.endsWith('.csv')) {
+                console.log("Currently looking at " + uploadFile.name); //uploadFile.name will show uploaded file name. testing
+                console.log("input file is csv");
+
+
+                Papa.parse(uploadFile, {
+                    header: false, //header needs to be false or data is objects rather than array
+                    complete: function (row) {
+                        console.log("Parsing complete:", row.data);
+                        console.log("row size " + row.data[0].length);
+                        console.log("row[0] is " + row.data[0]); //first row
+                        let tempArray = [];
+
+                        for (const cname of row.data[0]) {
+                            tempArray.push(cname);
+                            console.log(cname);
+                        } //end of for loop
+
+                        setColumnNameArray([...tempArray]);
+                        console.log("size list: " + columnNameArray.length);
+
+                    } //end of complete
+                }) //end of papa parse
+
+
+            } //end of if csv 
+
+
+            for (const cname of columnNameArray) {
+                console.log(cname);
+            }
+
+        } //end of big if statement
+    }, [uploadFile]);
+
+    const childToParent = (childData, isURL) => {
+        setUploadFile(childData);
+        setIsFileUploaded(true);
+
+
+        //setIsFileUploaded(false);
+
+
+        /*
+        columnNameArray = childData;
+        console.log("break");
+        console.log("size: " + columnNameArray.length)
+        for (const cname of columnNameArray) {
+            console.log(cname);
+        }
+        */
 
     }
 
-    function handleAddFilteredFieldClick() {
+    const submitButton = () => {
+        /*
+            Form Data Creation Here
+        */
+        var submitFormData = new FormData();
+        submitFormData.append("category", categoryField);
+        submitFormData.append("subcategories", subcategoriesField);
+        submitFormData.append("top-level-category", topLevelCategoryField);
+        submitFormData.append("price", priceField);
+        submitFormData.append("MFRCode", mfrCodeField);
+        
+        submitFormData.append("categorySeparator", categorySeparator);
+        submitFormData.append("subcategorySeparator", subcategorySeparator);
+        submitFormData.append("top-levelcategorySeparator", topLevelSeparator);
+        
+        setMapFormData(submitFormData);
 
+        // Also need for ignore and filter fields
+        //mapFormData.append("category", );
+        //mapFormData.append("category", );
+
+        for (var value of mapFormData.values()) {
+            console.log(value);
+        }
+
+        /*
+            API Requests here
+        */
+        var request = new XMLHttpRequest();
+        //request.open("POST", "http://foo.com/submitform.php");
+        //request.send(formData);
+    }
+
+    const onCategoryFieldChange = (e) => {
+        if (e)
+            setCategoryField(e.target.value);
+    }
+
+    const onSubcategoriesFieldChange = (e) => {
+        if (e)
+            setSubCategoriesField(e.target.value);
+    }
+
+    const onTopLevelCategoryFieldChange = (e) => {
+        if (e)
+            setTopLevelCategoryField(e.target.value);
+    }
+
+    const onPriceFieldChange = (e) => {
+        if (e)
+            setPriceField(e.target.value);
+    }
+
+    const onMFRCodeFieldChange = (e) => {
+        if (e)
+            setMfrCodeField(e.target.value);
+    }
+
+    const onIgnoreFieldsChange = (e) => {
+        if (e) {
+            var options = e.target.options;
+            var value = [];
+            for (var i = 0, l = options.length; i < l; i++) {
+                if (options[i].selected) {
+                    value.push(options[i].value);
+                }
+            }
+
+            setIgnoreFieldsList(value);
+        }
+    }
+
+    const onFilterFieldsChange = (e) => {
+        if (e) {
+            var options = e.target.options;
+            var value = [];
+            for (var i = 0, l = options.length; i < l; i++) {
+                if (options[i].selected) {
+                    value.push(options[i].value);
+                }
+            }
+
+            setFilterFieldsList(value);
+        }
+    }
+
+    function categorySeparatorFieldChange(val)
+    {
+        setCategorySeparator(val.target.value) //get value of textbox
+    }
+    
+    function subcategorySeparatorFieldChange(val)
+    {
+        setSubcategorySeparator(val.target.value)
+    }
+
+    function topLevelSeparatorFieldChange(val)
+    {
+        setTopLevelSeparator(val.target.value)
     }
 
 
     return (
 
-        <div class="screen bg-amber-400"> {/* Example of full screen coloring with "screen" class (indigo 400)*/}
+        <div class="screen bg-gradient-to-r from-amber-500 to-rose-900"> {/* Example of full screen coloring with "screen" class (indigo 400)*/}
 
             <div class="py-12 transition duration-150 ease-in-out z-10 top-0 right-0 bottom-0 left-0" id="modal">
                 <h1 class='text-7xl center-self mt-6 mb-10 place-self-stretch'>
                     😳 playground 😳
                 </h1>
-                <div role="alert" class="container mx-auto w-3/6 max-w-lg">
+                <div role="alert" class="container mx-auto w-4/6 max-w-2xl">
                     <div class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400"> {/* Show color change here */}
 
                         { /* Title Card */}
                         <h1 class="text-gray-800 font-lg font-bold tracking-normal leading-tight mb-4 text-2xl">Unthink AI Product Upload</h1>
 
                         { /* Upload file/drag or enter link */}
-                        <div class='flex px-5 pb-4' >
-                            <Row>
-                                <Space>
-                                    <Col>
-                                        <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Upload file</label>
-                                    </Col>
-                                    <Col>
-                                        <Input placeholder="Enter link here..." class='' />
-                                    </Col>
-                                    <Col>
-                                        <Upload>
-                                            <Button type='primary' shape="round">
-                                                <UploadOutlined />Upload
-                                            </Button>
-                                        </Upload>
-                                    </Col>
-                                </Space>
-                            </Row>
-                        </div>
+                        <BrowseFileOrLink childToParent={childToParent} ></BrowseFileOrLink>
 
-                        <BrowseFileOrLink class=''></BrowseFileOrLink>
+                        <div class="grid cols-2">
+                            { /* Category Drop Down */}
+                            <div class='flex px-5 pb-2 pt-5' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Category</label>
 
-                        { /* Category Drop Down */}
-                        <div class='flex px-5 pb-2 pt-5' >
-                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Category</label>
-
-                            <select name="selectList" id="selectList" class="mb-3 mx-4 w-3/4">
-                                <option value="item 1">Item 1</option>
-                                <option value="item 2">Item 2</option>
-                                <option value="item 3">Item 3</option>
-                            </select>
-                        </div>
-
-                        { /* Subcategories Drop Down */}
-                        <div class='flex px-5 pb-2' >
-                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Subcategories</label>
-
-                            <select name="selectList" id="selectList" class="mb-3 mx-4 w-3/4">
-                                <option value="item 1">Item 1</option>
-                                <option value="item 2">Item 2</option>
-                                <option value="item 3">Item 3</option>
-                            </select>
-                        </div>
-
-                        { /* Top-level Category Drop Down */}
-                        <div class='flex px-5 pb-2' >
-                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Top-Level Category</label>
-
-                            <select name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0">
-                                <option value="item 1">Item 1</option>
-                                <option value="item 2">Item 2</option>
-                                <option value="item 3">Item 3</option>
-                            </select>
-                        </div>
-
-                        { /* Price Drop Down */}
-                        <div class='flex px-5 pb-2' >
-                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Price</label>
-
-                            <select name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0">
-                                <option value="item 1">Item 1</option>
-                                <option value="item 2">Item 2</option>
-                                <option value="item 3">Item 3</option>
-                            </select>
-                        </div>
-
-                        { /* mfr_code Drop Down */}
-                        <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
-                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">MFR Code</label>
-
-                            <select name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0">
-                                <option value="item 1">Item 1</option>
-                                <option value="item 2">Item 2</option>
-                                <option value="item 3">Item 3</option>
-                            </select>
-                        </div>
-
-
-                        { /* Ignore fields section */}
-                        <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
-                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Ignore Fields</label>
-
-                            <div class="relative flex">
-                                <label class = "block">
-                                    
-                                    <select class= "block w-full mt-1 form-multiselect" multiple="true">
-                                    <option value="1" >Field 1</option>
-                                    <option value="2" >Field 2</option>
-                                    <option value="3" >Field 3</option>
-                                    <option value="4" >Field 4</option>
-                                    <option value="5" >Field 5</option>
+                                <select onChange={onCategoryFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4" disabled={!isFileUploaded ? true : null}>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
                                 </select>
-                            </label>
+                            </div>
+                            
+                            {/*Category Separator*/}
+                            <div class='flex px-5 pb-2' >
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Category Separator</label>
+                                <input type = "text" onChange={categorySeparatorFieldChange}></input>
                             </div>
 
-                            {/*
+                            { /* Subcategories Drop Down */}
+                            <div class='flex px-5 pb-2' >
+                                <label for="dropdownboxes" className="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Subcategories</label>
+
+                                <select onChange={onSubcategoriesFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4" disabled={!isFileUploaded ? true : null}>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            {/*Subcategory Separator*/}
+                            <div class='flex px-5 pb-2' >
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Subcategory Separator</label>
+                                <input type = "text" onChange={subcategorySeparatorFieldChange}></input>
+                            </div>
+
+                            { /* Top-level Category Drop Down */}
+                            <div class='flex px-5 pb-2' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Top-Level Category</label>
+
+                                <select onChange={onTopLevelCategoryFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0" disabled={!isFileUploaded ? true : null}>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            {/*Top-level Separator*/}
+                            <div class='flex px-5 pb-2' >
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Top-Level Category Separator</label>
+                                <input type = "text" onChange={topLevelSeparatorFieldChange}></input>
+                            </div>
+
+                            { /* Price Drop Down */}
+                            <div class='flex px-5 pb-2' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Price</label>
+
+                                <select onChange={onPriceFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0" disabled={!isFileUploaded ? true : null}>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            { /* mfr_code Drop Down */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">MFR Code</label>
+
+                                <select onChange={onMFRCodeFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0" disabled={!isFileUploaded ? true : null}>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+
+                            { /* Ignore fields section */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Ignore Fields</label>
+
+                                <div class="relative flex w-full">
+                                    <label class="w-full">
+
+                                        <select onChange={onIgnoreFieldsChange} class="w-full block mt-1 form-multiselect" multiple="true" disabled={!isFileUploaded ? true : null}>
+                                            {columnNameArray.map((cname) => {
+                                                return <option key={cname} value={cname}>{cname}</option>
+                                            })}
+                                        </select>
+                                    </label>
+                                </div>
+
+                                {/*
                             <Button
                                 type="primary"
                                 icon={<AppstoreAddOutlined />}
                                 onClick={handleAddFilteredFieldClick()}
                             />
                             */}
-                        </div>
+                            </div>
 
-                        { /* Filter fields section */}
-                        <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
-                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Filter Fields</label>
+                            { /* Filter fields section */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Filter Fields</label>
 
-                            <Button
-                                type="primary"
-                                icon={<AppstoreAddOutlined />}
-                                onClick={handleAddFilteredFieldClick()}
-                            />
+                                <div class="relative flex w-full">
+                                    <label class="w-full">
+
+                                        <select onChange={onFilterFieldsChange} class="block w-full mt-1 form-multiselect" multiple="true" disabled={!isFileUploaded ? true : null}>
+                                            {columnNameArray.map((cname) => {
+                                                return <option key={cname} value={cname}>{cname}</option>
+                                            })}
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
                         </div>
 
 
 
 
                         { /* Submit and cancel buttons */}
-                        <div class="flex items-center justify-start w-full">
-                            <button class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-emerald-700 rounded text-white px-8 py-2 text-sm mt-6">
+                        <div class="flex items-center justify-center w-full">
+                            <button onClick={submitButton} class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-emerald-700 rounded text-white px-8 py-2 text-sm mt-6">
                                 Submit
                             </button>
                             <button class="focus:outline-none focus:ring-2 focus:ring-offset-2  focus:ring-gray-400 ml-3 bg-gray-100 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border rounded px-8 py-2 text-sm mt-6" onclick="modalHandler()">
@@ -175,6 +412,40 @@ const PlaygroundPage = () => {
                                     Cancel (returns to index page)
                                 </Link>
                             </button>
+                        </div>
+
+                        <div class="mt-10 grid cols-1 items-center justify-start w-full">
+                            <h1>Mappings</h1>
+                            <p class="ml-4">
+                                Category: <b>{categoryField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Category Separator: <b>{categorySeparator}</b>
+                            </p>
+                            <p class="ml-4">
+                                Subcategories: <b>{subcategoriesField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Subategory Separator: <b>{subcategorySeparator}</b>
+                            </p>
+                            <p class="ml-4">
+                                Top-Level Category: <b>{topLevelCategoryField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Top-Level Category Separator: <b>{topLevelSeparator}</b>
+                            </p>
+                            <p class="ml-4">
+                                Price: <b>{priceField}</b>
+                            </p>
+                            <p class="ml-4">
+                                MFR Code: <b>{mfrCodeField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Ignore Fields: <b>{ignoreFieldsList}</b>
+                            </p>
+                            <p class="ml-4">
+                                Filter Fields: <b>{filterFieldsList}</b>
+                            </p>
                         </div>
 
                         { /* Exit button */}
@@ -202,6 +473,7 @@ const PlaygroundPage = () => {
             </div>
         </div >
     )
+
 }
 
 export default PlaygroundPage
