@@ -62,18 +62,7 @@ function PlaygroundPage() {
 
 
         if (!(uploadFile instanceof File)) {
-            console.log("BRUHUHRHUH");
-            let url = uploadFile;
-            /*
-            fetch(url)
-                .then((res) => { return res.blob(); })
-                .then((data) => {
-                    var a = document.createElement("a");
-                    a.href = window.URL.createObjectURL(data);
-                    a.download = "FILENAME";
-                    a.click();
-                });
-                */
+            // Upload link logic here
         }
         else if (isFileUploaded && uploadFile) {
             if (uploadFile.name.endsWith('.xlsx')) {
@@ -145,6 +134,10 @@ function PlaygroundPage() {
         } //end of big if statement
     }, [uploadFile]);
 
+    const nameToColumnNumberConvert = (name) => {
+        return columnNameArray.indexOf(name);
+    }
+
     const childToParent = (childData, isURL) => {
         setUploadFile(childData);
         setIsFileUploaded(true);
@@ -169,23 +162,24 @@ function PlaygroundPage() {
             Form Data Creation Here
         */
         var submitFormData = new FormData();
-        submitFormData.append("category", categoryField);
-        submitFormData.append("subcategories", subcategoriesField);
-        submitFormData.append("top-level-category", topLevelCategoryField);
-        submitFormData.append("price", priceField);
-        submitFormData.append("MFRCode", mfrCodeField);
-        
-        submitFormData.append("categorySeparator", categorySeparator);
-        submitFormData.append("subcategorySeparator", subcategorySeparator);
-        submitFormData.append("top-levelcategorySeparator", topLevelSeparator);
-        
+
+        submitFormData.append("category", nameToColumnNumberConvert(categoryField));
+        submitFormData.append("subcategories", nameToColumnNumberConvert(subcategoriesField));
+        submitFormData.append("top-level-category", nameToColumnNumberConvert(topLevelCategoryField));
+        submitFormData.append("price", nameToColumnNumberConvert(priceField));
+        submitFormData.append("MFRCode", nameToColumnNumberConvert(mfrCodeField));
+
+        submitFormData.append("categorySeparator", nameToColumnNumberConvert(categorySeparator));
+        submitFormData.append("subcategorySeparator", nameToColumnNumberConvert(subcategorySeparator));
+        submitFormData.append("top-levelcategorySeparator", nameToColumnNumberConvert(topLevelSeparator));
+
         setMapFormData(submitFormData);
 
         // Also need for ignore and filter fields
         //mapFormData.append("category", );
         //mapFormData.append("category", );
 
-        for (var value of mapFormData.values()) {
+        for (var value of submitFormData.values()) {
             console.log(value);
         }
 
@@ -250,18 +244,15 @@ function PlaygroundPage() {
         }
     }
 
-    function categorySeparatorFieldChange(val)
-    {
+    function categorySeparatorFieldChange(val) {
         setCategorySeparator(val.target.value) //get value of textbox
     }
-    
-    function subcategorySeparatorFieldChange(val)
-    {
+
+    function subcategorySeparatorFieldChange(val) {
         setSubcategorySeparator(val.target.value)
     }
 
-    function topLevelSeparatorFieldChange(val)
-    {
+    function topLevelSeparatorFieldChange(val) {
         setTopLevelSeparator(val.target.value)
     }
 
@@ -294,11 +285,11 @@ function PlaygroundPage() {
                                     })}
                                 </select>
                             </div>
-                            
+
                             {/*Category Separator*/}
                             <div class='flex px-5 pb-2' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Category Separator</label>
-                                <input type = "text" onChange={categorySeparatorFieldChange}></input>
+                                <input type="text" onChange={categorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Subcategories Drop Down */}
@@ -315,7 +306,7 @@ function PlaygroundPage() {
                             {/*Subcategory Separator*/}
                             <div class='flex px-5 pb-2' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Subcategory Separator</label>
-                                <input type = "text" onChange={subcategorySeparatorFieldChange}></input>
+                                <input type="text" onChange={subcategorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Top-level Category Drop Down */}
@@ -332,7 +323,7 @@ function PlaygroundPage() {
                             {/*Top-level Separator*/}
                             <div class='flex px-5 pb-2' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Top-Level Category Separator</label>
-                                <input type = "text" onChange={topLevelSeparatorFieldChange}></input>
+                                <input type="text" onChange={topLevelSeparatorFieldChange}></input>
                             </div>
 
                             { /* Price Drop Down */}
