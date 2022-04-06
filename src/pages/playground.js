@@ -288,8 +288,8 @@ function PlaygroundPage() {
 
                             {/*Category Separator*/}
                             <div class='flex px-5 pb-2' >
-                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Category Separator</label>
-                                <input type="text" onChange={categorySeparatorFieldChange}></input>
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Category Separator</label>
+                                <input type="text"  placeholder='Type separator here' class = 'pl-1' onChange={categorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Subcategories Drop Down */}
@@ -305,8 +305,8 @@ function PlaygroundPage() {
 
                             {/*Subcategory Separator*/}
                             <div class='flex px-5 pb-2' >
-                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Subcategory Separator</label>
-                                <input type="text" onChange={subcategorySeparatorFieldChange}></input>
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Subcategory Separator</label>
+                                <input type="text" placeholder='Type separator here' class = 'pl-1' onChange={subcategorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Top-level Category Drop Down */}
@@ -322,8 +322,8 @@ function PlaygroundPage() {
 
                             {/*Top-level Separator*/}
                             <div class='flex px-5 pb-2' >
-                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Top-Level Category Separator</label>
-                                <input type="text" onChange={topLevelSeparatorFieldChange}></input>
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category Separator</label>
+                                <input type="text" placeholder='Type separator here' class = 'pl-1' onChange={topLevelSeparatorFieldChange}></input>
                             </div>
 
                             { /* Price Drop Down */}
