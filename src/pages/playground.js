@@ -54,6 +54,10 @@ function PlaygroundPage() {
     const [subcategorySeparator, setSubcategorySeparator] = useState();
     const [topLevelSeparator, setTopLevelSeparator] = useState();
     const [sharedSeparator, setSharedSeparator] = useState();
+
+    const [catCounter, setCatCounter] = useState(0); //for category index counter
+    const [topLevelCounter, setTopLevelCounter] = useState(0); //for top level index counter
+
     //const [Separators, setSeparators] = useState(false); //used for submit button to show separators
 
     //const [isURLfile, setIsURLfile] = useState();
@@ -213,41 +217,41 @@ function PlaygroundPage() {
 
 
     React.useEffect(() => {
-        console.log("categoryField is " + categoryField)
+        //console.log("categoryField is " + categoryField)
         categoryFieldVar = categoryField;
-        console.log("categoryFieldVar is " + categoryFieldVar)
-        console.log("subcategoriesField is " + subcategoriesField)
+        //console.log("categoryFieldVar is " + categoryFieldVar)
+        //console.log("subcategoriesField is " + subcategoriesField)
         subcategoryFieldVar = subcategoriesField;
-        console.log("subcategoryFieldVar is " + subcategoryFieldVar)
-        console.log("subcategoriesField is " + topLevelCategoryField)
+        //console.log("subcategoryFieldVar is " + subcategoryFieldVar)
+        //console.log("subcategoriesField is " + topLevelCategoryField)
         topLevelFieldVar = topLevelCategoryField;
-        console.log("subcategoryFieldVar is " + topLevelFieldVar)
+        //console.log("subcategoryFieldVar is " + topLevelFieldVar)
         isThreeToOne();
     }, [categoryField]); //will run when categoryField changes
 
     React.useEffect(() => {
-        console.log("categoryField is " + categoryField)
+        //console.log("categoryField is " + categoryField)
         categoryFieldVar = categoryField;
-        console.log("categoryFieldVar is " + categoryFieldVar)
-        console.log("subcategoriesField is " + subcategoriesField)
+        //console.log("categoryFieldVar is " + categoryFieldVar)
+        //console.log("subcategoriesField is " + subcategoriesField)
         subcategoryFieldVar = subcategoriesField;
-        console.log("subcategoryFieldVar is " + subcategoryFieldVar)
-        console.log("subcategoriesField is " + topLevelCategoryField)
+        //console.log("subcategoryFieldVar is " + subcategoryFieldVar)
+        //console.log("subcategoriesField is " + topLevelCategoryField)
         topLevelFieldVar = topLevelCategoryField;
-        console.log("subcategoryFieldVar is " + topLevelFieldVar)
+        //console.log("subcategoryFieldVar is " + topLevelFieldVar)
         isThreeToOne();
     }, [subcategoriesField]); //will run when subcategoriesField changes
 
     React.useEffect(() => {
-        console.log("categoryField is " + categoryField)
+        //console.log("categoryField is " + categoryField)
         categoryFieldVar = categoryField;
-        console.log("categoryFieldVar is " + categoryFieldVar)
-        console.log("subcategoriesField is " + subcategoriesField)
+        //console.log("categoryFieldVar is " + categoryFieldVar)
+        //console.log("subcategoriesField is " + subcategoriesField)
         subcategoryFieldVar = subcategoriesField;
-        console.log("subcategoryFieldVar is " + subcategoryFieldVar)
-        console.log("subcategoriesField is " + topLevelCategoryField)
+        //console.log("subcategoryFieldVar is " + subcategoryFieldVar)
+        //console.log("subcategoriesField is " + topLevelCategoryField)
         topLevelFieldVar = topLevelCategoryField;
-        console.log("subcategoryFieldVar is " + topLevelFieldVar)
+        //console.log("subcategoryFieldVar is " + topLevelFieldVar)
         isThreeToOne();
     }, [topLevelCategoryField]); //will run when topLevelCategoryField changes
 
@@ -352,6 +356,42 @@ function PlaygroundPage() {
         setSharedSeparator(val.target.value)
     }
 
+    const incrementCatCounter = (e) => {
+        setCatCounter(catCounter + 1 );
+    }
+   
+    const decrementCatCounter = (e) => {
+        //if counter > 0 --> decrement
+        if (catCounter > 0 )
+        {
+            setCatCounter(catCounter - 1 );
+        }
+        else
+        console.log("Index cannot be below 0");
+    }
+
+    const resetCatCounter = (e) => {
+        setCatCounter(0);
+    }
+
+    const incrementTopLevelCounter = (e) => {
+        setTopLevelCounter(topLevelCounter + 1 );
+        
+    }
+   
+    const decrementTopLevelCounter = (e) => {
+        //if counter > 0 --> decrement
+        if (topLevelCounter > 0 )
+        {
+            setTopLevelCounter(topLevelCounter - 1 );
+        }
+        else
+        console.log("Index cannot be below 0");
+    }
+    
+    const resetTopLevelCounter = (e) => {
+        setTopLevelCounter(0);
+    }
 
 
     return (
@@ -426,25 +466,27 @@ function PlaygroundPage() {
                             {/*Pop up separator if at least one category field matches*/}
                             <div id = "shareSep" class='flex px-5 pb-2' >
                                 <label  for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Shared Separator</label>
-                                <input type="text" placeholder='Type separator here' class = 'pl-1' onChange={sharedSeparatorFieldChange}></input>
+                                <input type="text" disabled="disabled" placeholder='Type separator here' class = 'pl-1' onChange={sharedSeparatorFieldChange}></input>
                             </div>
 
-                            {/*Pop up for category dropdown index if at least one category field matches*/}
+                            {/*Pop up for category counter index if at least one category field matches*/}
                             <div id = "catMatch" class='flex px-5 pb-2' >
-                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Category Index</label>
-                                {/*put dropdown box here */}
+                                <label class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Category Index</label>
+                                {/*put counter box here */}
+                                <Button onClick={decrementCatCounter}>-</Button>
+                                <h3 for = "counter display" class = "pl-2 pr-2 text-gray-800 text-lg font-bold" >{catCounter}</h3>
+                                <Button onClick={incrementCatCounter}>+</Button>
+                                <Button onClick={resetCatCounter}>Reset</Button>
                             </div>
-                            
-                            {/*Pop up for subcategory dropdown index if at least one category field matches*/}
-                            <div id = "subMatch" class='flex px-5 pb-2' >
-                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Subcategory Index</label>
-                                {/*put dropdown box here */}
-                            </div>
-                            
-                            {/*Pop up for top level category dropdown index if at least one category field matches*/}
+                                                        
+                            {/*Pop up for top level category counter index if at least one category field matches*/}
                             <div id = "topMatch" class='flex px-5 pb-2' >
-                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category Index</label>
-                                {/*put dropdown box here */}
+                                <label class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category Index</label>
+                                {/*put counter box here */}
+                                <Button onClick={decrementTopLevelCounter}>-</Button>
+                                <h3 for = "counter display" class = "pl-2 pr-2 text-gray-800 text-lg font-bold" >{topLevelCounter}</h3>
+                                <Button onClick={incrementTopLevelCounter}>+</Button>
+                                <Button onClick={resetTopLevelCounter}>Reset</Button>
                             </div>
                             
                             { /* Price Drop Down */}
