@@ -53,9 +53,15 @@ function PlaygroundPage() {
     const [categorySeparator, setCategorySeparator] = useState();
     const [subcategorySeparator, setSubcategorySeparator] = useState();
     const [topLevelSeparator, setTopLevelSeparator] = useState();
+    const [sharedSeparator, setSharedSeparator] = useState();
     //const [Separators, setSeparators] = useState(false); //used for submit button to show separators
 
     //const [isURLfile, setIsURLfile] = useState();
+    
+    // used to hold new state
+    var categoryFieldVar;
+    var subcategoryFieldVar;
+    var topLevelFieldVar;
 
     React.useEffect(() => {
         console.log(uploadFile);
@@ -132,7 +138,8 @@ function PlaygroundPage() {
             }
 
         } //end of big if statement
-    }, [uploadFile]);
+
+    }, [uploadFile]); //end of useEffect
 
     const nameToColumnNumberConvert = (name) => {
         return columnNameArray.indexOf(name);
@@ -172,6 +179,7 @@ function PlaygroundPage() {
         submitFormData.append("categorySeparator", nameToColumnNumberConvert(categorySeparator));
         submitFormData.append("subcategorySeparator", nameToColumnNumberConvert(subcategorySeparator));
         submitFormData.append("top-levelcategorySeparator", nameToColumnNumberConvert(topLevelSeparator));
+        submitFormData.append("sharedcategorySeparator", nameToColumnNumberConvert(sharedSeparator));
 
         setMapFormData(submitFormData);
 
@@ -183,27 +191,111 @@ function PlaygroundPage() {
             console.log(value);
         }
 
+/*
+        //test if category, subcategory, or top level field matches
+        if(categoryField == subcategoriesField && subcategoriesField == topLevelCategoryField ) //all fields the same
+        {
+            console.log("All fields are the same");
+            //make dropdown with 3 options
+        }
+        else
+            console.log("Not all same");
+            //no dropdown needed
+*/
+
         /*
             API Requests here
         */
         var request = new XMLHttpRequest();
         //request.open("POST", "http://foo.com/submitform.php");
         //request.send(formData);
+    } //end of submit button
+
+
+    React.useEffect(() => {
+        console.log("categoryField is " + categoryField)
+        categoryFieldVar = categoryField;
+        console.log("categoryFieldVar is " + categoryFieldVar)
+        console.log("subcategoriesField is " + subcategoriesField)
+        subcategoryFieldVar = subcategoriesField;
+        console.log("subcategoryFieldVar is " + subcategoryFieldVar)
+        console.log("subcategoriesField is " + topLevelCategoryField)
+        topLevelFieldVar = topLevelCategoryField;
+        console.log("subcategoryFieldVar is " + topLevelFieldVar)
+        isThreeToOne();
+    }, [categoryField]); //will run when categoryField changes
+
+    React.useEffect(() => {
+        console.log("categoryField is " + categoryField)
+        categoryFieldVar = categoryField;
+        console.log("categoryFieldVar is " + categoryFieldVar)
+        console.log("subcategoriesField is " + subcategoriesField)
+        subcategoryFieldVar = subcategoriesField;
+        console.log("subcategoryFieldVar is " + subcategoryFieldVar)
+        console.log("subcategoriesField is " + topLevelCategoryField)
+        topLevelFieldVar = topLevelCategoryField;
+        console.log("subcategoryFieldVar is " + topLevelFieldVar)
+        isThreeToOne();
+    }, [subcategoriesField]); //will run when subcategoriesField changes
+
+    React.useEffect(() => {
+        console.log("categoryField is " + categoryField)
+        categoryFieldVar = categoryField;
+        console.log("categoryFieldVar is " + categoryFieldVar)
+        console.log("subcategoriesField is " + subcategoriesField)
+        subcategoryFieldVar = subcategoriesField;
+        console.log("subcategoryFieldVar is " + subcategoryFieldVar)
+        console.log("subcategoriesField is " + topLevelCategoryField)
+        topLevelFieldVar = topLevelCategoryField;
+        console.log("subcategoryFieldVar is " + topLevelFieldVar)
+        isThreeToOne();
+    }, [topLevelCategoryField]); //will run when topLevelCategoryField changes
+
+    function isThreeToOne()
+    {
+
+        //test if category, subcategory, or top level field matches
+       // if(categoryField == subcategoriesField && subcategoriesField == topLevelCategoryField ) //all fields the same
+        if(categoryFieldVar == subcategoryFieldVar && subcategoryFieldVar == topLevelFieldVar)
+        {
+            console.log("All fields are the same");
+            console.log("Category Field Var is " + categoryFieldVar);
+            console.log("Subcategory Field Var is " + subcategoryFieldVar);
+            console.log("Top Level Category Field Var is " + topLevelFieldVar);   
+            //make dropdown with 3 options
+        }
+        else
+        {
+            console.log("Not all same");
+            console.log("Category Field Var is " + categoryFieldVar);
+            console.log("Subcategory Field Var is " + subcategoryFieldVar);
+            console.log("Top Level Category Field Var is " + topLevelFieldVar);   
+        }    
+
     }
 
     const onCategoryFieldChange = (e) => {
         if (e)
+        {
             setCategoryField(e.target.value);
+            //console.log("e.target.value Cat is " + e.target.value);
+        }  
     }
 
     const onSubcategoriesFieldChange = (e) => {
         if (e)
+        {
             setSubCategoriesField(e.target.value);
+            //console.log("e.target.value Sub is " + e.target.value);
+        }
     }
 
     const onTopLevelCategoryFieldChange = (e) => {
         if (e)
+        {
             setTopLevelCategoryField(e.target.value);
+            //console.log("e.target.value TLC is " + e.target.value);
+        }
     }
 
     const onPriceFieldChange = (e) => {
@@ -255,6 +347,11 @@ function PlaygroundPage() {
     function topLevelSeparatorFieldChange(val) {
         setTopLevelSeparator(val.target.value)
     }
+
+    function sharedSeparatorFieldChange(val) {
+        setSharedSeparator(val.target.value)
+    }
+
 
 
     return (
@@ -326,6 +423,30 @@ function PlaygroundPage() {
                                 <input type="text" placeholder='Type separator here' class = 'pl-1' onChange={topLevelSeparatorFieldChange}></input>
                             </div>
 
+                            {/*Pop up separator if at least one category field matches*/}
+                            <div id = "shareSep" class='flex px-5 pb-2' >
+                                <label  for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Shared Separator</label>
+                                <input type="text" placeholder='Type separator here' class = 'pl-1' onChange={sharedSeparatorFieldChange}></input>
+                            </div>
+
+                            {/*Pop up for category dropdown index if at least one category field matches*/}
+                            <div id = "catMatch" class='flex px-5 pb-2' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Category Index</label>
+                                {/*put dropdown box here */}
+                            </div>
+                            
+                            {/*Pop up for subcategory dropdown index if at least one category field matches*/}
+                            <div id = "subMatch" class='flex px-5 pb-2' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Subcategory Index</label>
+                                {/*put dropdown box here */}
+                            </div>
+                            
+                            {/*Pop up for top level category dropdown index if at least one category field matches*/}
+                            <div id = "topMatch" class='flex px-5 pb-2' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category Index</label>
+                                {/*put dropdown box here */}
+                            </div>
+                            
                             { /* Price Drop Down */}
                             <div class='flex px-5 pb-2' >
                                 <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Price</label>
@@ -426,6 +547,9 @@ function PlaygroundPage() {
                                 Top-Level Category Separator: <b>{topLevelSeparator}</b>
                             </p>
                             <p class="ml-4">
+                                Shared Separator: <b>{sharedSeparator}</b>
+                            </p>
+                            <p class="ml-4">
                                 Price: <b>{priceField}</b>
                             </p>
                             <p class="ml-4">
@@ -465,6 +589,6 @@ function PlaygroundPage() {
         </div >
     )
 
-}
+} //end of Playground
 
 export default PlaygroundPage
