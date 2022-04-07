@@ -58,6 +58,8 @@ function PlaygroundPage() {
     const [catCounter, setCatCounter] = useState(0); //for category index counter
     const [topLevelCounter, setTopLevelCounter] = useState(0); //for top level index counter
 
+    const[isDisabled, setIsDisabled] = useState(true) //prop is initially disabled
+
     //const [Separators, setSeparators] = useState(false); //used for submit button to show separators
 
     //const [isURLfile, setIsURLfile] = useState();
@@ -263,17 +265,19 @@ function PlaygroundPage() {
         if(categoryFieldVar == subcategoryFieldVar && subcategoryFieldVar == topLevelFieldVar)
         {
             console.log("All fields are the same");
-            console.log("Category Field Var is " + categoryFieldVar);
-            console.log("Subcategory Field Var is " + subcategoryFieldVar);
-            console.log("Top Level Category Field Var is " + topLevelFieldVar);   
-            //make dropdown with 3 options
+            //console.log("Category Field Var is " + categoryFieldVar);
+            //console.log("Subcategory Field Var is " + subcategoryFieldVar);
+            //console.log("Top Level Category Field Var is " + topLevelFieldVar);   
+            setIsDisabled(false); //enable fields
+            console.log(isDisabled);
         }
         else
         {
             console.log("Not all same");
-            console.log("Category Field Var is " + categoryFieldVar);
-            console.log("Subcategory Field Var is " + subcategoryFieldVar);
-            console.log("Top Level Category Field Var is " + topLevelFieldVar);   
+            //console.log("Category Field Var is " + categoryFieldVar);
+            //console.log("Subcategory Field Var is " + subcategoryFieldVar);
+            //console.log("Top Level Category Field Var is " + topLevelFieldVar);   
+            setIsDisabled(true); //disable fields
         }    
 
     }
@@ -466,27 +470,27 @@ function PlaygroundPage() {
                             {/*Pop up separator if at least one category field matches*/}
                             <div id = "shareSep" class='flex px-5 pb-2' >
                                 <label  for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Shared Separator</label>
-                                <input type="text" disabled="disabled" placeholder='Type separator here' class = 'pl-1' onChange={sharedSeparatorFieldChange}></input>
+                                <input type="text" disabled={isDisabled} placeholder='Type separator here' class = 'pl-1' onChange={sharedSeparatorFieldChange}></input>
                             </div>
 
                             {/*Pop up for category counter index if at least one category field matches*/}
                             <div id = "catMatch" class='flex px-5 pb-2' >
                                 <label class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Category Index</label>
                                 {/*put counter box here */}
-                                <Button onClick={decrementCatCounter}>-</Button>
+                                <Button disabled={isDisabled} onClick={decrementCatCounter}>-</Button>
                                 <h3 for = "counter display" class = "pl-2 pr-2 text-gray-800 text-lg font-bold" >{catCounter}</h3>
-                                <Button onClick={incrementCatCounter}>+</Button>
-                                <Button onClick={resetCatCounter}>Reset</Button>
+                                <Button disabled={isDisabled} onClick={incrementCatCounter}>+</Button>
+                                <Button disabled={isDisabled} onClick={resetCatCounter}>Reset</Button>
                             </div>
                                                         
                             {/*Pop up for top level category counter index if at least one category field matches*/}
                             <div id = "topMatch" class='flex px-5 pb-2' >
                                 <label class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category Index</label>
                                 {/*put counter box here */}
-                                <Button onClick={decrementTopLevelCounter}>-</Button>
+                                <Button disabled={isDisabled} onClick={decrementTopLevelCounter}>-</Button>
                                 <h3 for = "counter display" class = "pl-2 pr-2 text-gray-800 text-lg font-bold" >{topLevelCounter}</h3>
-                                <Button onClick={incrementTopLevelCounter}>+</Button>
-                                <Button onClick={resetTopLevelCounter}>Reset</Button>
+                                <Button disabled={isDisabled} onClick={incrementTopLevelCounter}>+</Button>
+                                <Button disabled={isDisabled} onClick={resetTopLevelCounter}>Reset</Button>
                             </div>
                             
                             { /* Price Drop Down */}
