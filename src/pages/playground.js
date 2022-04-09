@@ -262,7 +262,7 @@ function PlaygroundPage() {
 
         //test if category, subcategory, or top level field matches
        // if(categoryField == subcategoriesField && subcategoriesField == topLevelCategoryField ) //all fields the same
-        if(categoryFieldVar == subcategoryFieldVar && subcategoryFieldVar == topLevelFieldVar)
+        if(categoryFieldVar == subcategoryFieldVar && subcategoryFieldVar == topLevelFieldVar && typeof categoryFieldVar != 'undefined')
         {
             console.log("All fields are the same");
             //console.log("Category Field Var is " + categoryFieldVar);
