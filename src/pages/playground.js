@@ -58,13 +58,13 @@ function PlaygroundPage() {
     const [catCounter, setCatCounter] = useState(0); //for category index counter
     const [topLevelCounter, setTopLevelCounter] = useState(0); //for top level index counter
 
-    const[isDisabled, setIsDisabled] = useState(true) //prop is initially disabled
+    const [isDisabled, setIsDisabled] = useState(true) //prop is initially disabled
     const [textColor, setTextColor] = useState("gray w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2");
 
     //const [Separators, setSeparators] = useState(false); //used for submit button to show separators
 
     //const [isURLfile, setIsURLfile] = useState();
-    
+
     // used to hold new state
     var categoryFieldVar;
     var subcategoryFieldVar;
@@ -202,17 +202,17 @@ function PlaygroundPage() {
             console.log(value);
         }
 
-/*
-        //test if category, subcategory, or top level field matches
-        if(categoryField == subcategoriesField && subcategoriesField == topLevelCategoryField ) //all fields the same
-        {
-            console.log("All fields are the same");
-            //make dropdown with 3 options
-        }
-        else
-            console.log("Not all same");
-            //no dropdown needed
-*/
+        /*
+                //test if category, subcategory, or top level field matches
+                if(categoryField == subcategoriesField && subcategoriesField == topLevelCategoryField ) //all fields the same
+                {
+                    console.log("All fields are the same");
+                    //make dropdown with 3 options
+                }
+                else
+                    console.log("Not all same");
+                    //no dropdown needed
+        */
 
         /*
             API Requests here
@@ -234,8 +234,9 @@ function PlaygroundPage() {
         topLevelFieldVar = topLevelCategoryField;
         //console.log("subcategoryFieldVar is " + topLevelFieldVar)
         isThreeToOne();
-    }, [categoryField]); //will run when categoryField changes
+    }, [categoryField, subcategoriesField, topLevelCategoryField]); //will run when categoryField changes
 
+    /*
     React.useEffect(() => {
         //console.log("categoryField is " + categoryField)
         categoryFieldVar = categoryField;
@@ -261,14 +262,13 @@ function PlaygroundPage() {
         //console.log("subcategoryFieldVar is " + topLevelFieldVar)
         isThreeToOne();
     }, [topLevelCategoryField]); //will run when topLevelCategoryField changes
+*/
 
-    function isThreeToOne()
-    {
+    function isThreeToOne() {
 
         //test if category, subcategory, or top level field matches
-       // if(categoryField == subcategoriesField && subcategoriesField == topLevelCategoryField ) //all fields the same
-        if(categoryFieldVar == subcategoryFieldVar && subcategoryFieldVar == topLevelFieldVar && typeof categoryFieldVar != 'undefined')
-        {
+        // if(categoryField == subcategoriesField && subcategoriesField == topLevelCategoryField ) //all fields the same
+        if (categoryFieldVar == subcategoryFieldVar && subcategoryFieldVar == topLevelFieldVar && typeof categoryFieldVar != 'undefined') {
             console.log("All fields are the same");
             //console.log("Category Field Var is " + categoryFieldVar);
             //console.log("Subcategory Field Var is " + subcategoryFieldVar);
@@ -277,8 +277,7 @@ function PlaygroundPage() {
             console.log(isDisabled);
             setTextColor("w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2");
         }
-        else
-        {
+        else {
             console.log("Not all same");
             //console.log("Category Field Var is " + categoryFieldVar);
             //console.log("Subcategory Field Var is " + subcategoryFieldVar);
@@ -288,30 +287,28 @@ function PlaygroundPage() {
             //setSharedSeparator(null);
             setTopLevelCounter(0); //reset index to 0
             setCatCounter(0); //reset index to 0
+            setSharedSeparator("");
             setTextColor("w-1/4 text-gray-300 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2"); //light gray text
-        }    
+        }
 
     }
 
     const onCategoryFieldChange = (e) => {
-        if (e)
-        {
+        if (e) {
             setCategoryField(e.target.value);
             //console.log("e.target.value Cat is " + e.target.value);
-        }  
+        }
     }
 
     const onSubcategoriesFieldChange = (e) => {
-        if (e)
-        {
+        if (e) {
             setSubCategoriesField(e.target.value);
             //console.log("e.target.value Sub is " + e.target.value);
         }
     }
 
     const onTopLevelCategoryFieldChange = (e) => {
-        if (e)
-        {
+        if (e) {
             setTopLevelCategoryField(e.target.value);
             //console.log("e.target.value TLC is " + e.target.value);
         }
@@ -372,17 +369,16 @@ function PlaygroundPage() {
     }
 
     const incrementCatCounter = (e) => {
-        setCatCounter(catCounter + 1 );
+        setCatCounter(catCounter + 1);
     }
-   
+
     const decrementCatCounter = (e) => {
         //if counter > 0 --> decrement
-        if (catCounter > 0 )
-        {
-            setCatCounter(catCounter - 1 );
+        if (catCounter > 0) {
+            setCatCounter(catCounter - 1);
         }
         else
-        console.log("Index cannot be below 0");
+            console.log("Index cannot be below 0");
     }
 
     const resetCatCounter = (e) => {
@@ -390,20 +386,19 @@ function PlaygroundPage() {
     }
 
     const incrementTopLevelCounter = (e) => {
-        setTopLevelCounter(topLevelCounter + 1 );
-        
+        setTopLevelCounter(topLevelCounter + 1);
+
     }
-   
+
     const decrementTopLevelCounter = (e) => {
         //if counter > 0 --> decrement
-        if (topLevelCounter > 0 )
-        {
-            setTopLevelCounter(topLevelCounter - 1 );
+        if (topLevelCounter > 0) {
+            setTopLevelCounter(topLevelCounter - 1);
         }
         else
-        console.log("Index cannot be below 0");
+            console.log("Index cannot be below 0");
     }
-    
+
     const resetTopLevelCounter = (e) => {
         setTopLevelCounter(0);
     }
@@ -442,7 +437,7 @@ function PlaygroundPage() {
                             {/*Category Separator*/}
                             <div class='flex px-5 pb-2' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Category Separator</label>
-                                <input type="text" placeholder='Type separator here' class = 'pl-1' onChange={categorySeparatorFieldChange}></input>
+                                <input type="text" placeholder='Type separator here' class='pl-1' onChange={categorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Subcategories Drop Down */}
@@ -459,12 +454,12 @@ function PlaygroundPage() {
                             {/*Subcategory Separator*/}
                             <div class='flex px-5 pb-2' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Subcategory Separator</label>
-                                <input type="text" placeholder='Type separator here' class = 'pl-1' onChange={subcategorySeparatorFieldChange}></input>
+                                <input type="text" placeholder='Type separator here' class='pl-1' onChange={subcategorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Top-level Category Drop Down */}
                             <div class='flex px-5 pb-2' >
-                                <label for="dropdownboxes" class= "w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category</label>
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category</label>
 
                                 <select onChange={onTopLevelCategoryFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0" disabled={!isFileUploaded ? true : null}>
                                     {columnNameArray.map((cname) => {
@@ -476,35 +471,35 @@ function PlaygroundPage() {
                             {/*Top-level Separator*/}
                             <div class='flex px-5 pb-2' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category Separator</label>
-                                <input type="text" placeholder='Type separator here' class = 'pl-1' onChange={topLevelSeparatorFieldChange}></input>
+                                <input type="text" placeholder='Type separator here' class='pl-1' onChange={topLevelSeparatorFieldChange}></input>
                             </div>
 
                             {/*Pop up separator if at least one category field matches*/}
-                            <div id = "shareSep" class='flex px-5 pb-2' >
-                                <label  for="separator" class={textColor}>Shared Separator</label>
-                                <input type="text" id="sharedSep" disabled={isDisabled} placeholder='Type separator here' class = 'pl-1' onChange={sharedSeparatorFieldChange}></input>
+                            <div id="shareSep" class='flex px-5 pb-2' >
+                                <label for="separator" class={textColor}>Shared Separator</label>
+                                <input type="text" id="sharedSep" disabled={isDisabled} placeholder='Type separator here' class='pl-1' onChange={sharedSeparatorFieldChange} value={sharedSeparator}></input>
                             </div>
 
                             {/*Pop up for category counter index if at least one category field matches*/}
-                            <div id = "catMatch" class='flex px-5 pb-2' >
+                            <div id="catMatch" class='flex px-5 pb-2' >
                                 <label class={textColor}>Category Index</label>
                                 {/*put counter box here */}
                                 <Button disabled={isDisabled} onClick={decrementCatCounter}>-</Button>
-                                <h3 for = "counter display" class = "pl-2 pr-2 text-gray-800 text-lg font-bold" >{catCounter}</h3>
+                                <h3 for="counter display" class="pl-2 pr-2 text-gray-800 text-lg font-bold" >{catCounter}</h3>
                                 <Button disabled={isDisabled} onClick={incrementCatCounter}>+</Button>
                                 <Button disabled={isDisabled} onClick={resetCatCounter}>Reset</Button>
                             </div>
-                                                        
+
                             {/*Pop up for top level category counter index if at least one category field matches*/}
-                            <div id = "topMatch" class='flex px-5 pb-2' >
+                            <div id="topMatch" class='flex px-5 pb-2' >
                                 <label class={textColor}>Top-Level Category Index</label>
                                 {/*put counter box here */}
                                 <Button disabled={isDisabled} onClick={decrementTopLevelCounter}>-</Button>
-                                <h3 for = "counter display" class = "pl-2 pr-2 text-gray-800 text-lg font-bold" >{topLevelCounter}</h3>
+                                <h3 for="counter display" class="pl-2 pr-2 text-gray-800 text-lg font-bold" >{topLevelCounter}</h3>
                                 <Button disabled={isDisabled} onClick={incrementTopLevelCounter}>+</Button>
                                 <Button disabled={isDisabled} onClick={resetTopLevelCounter}>Reset</Button>
                             </div>
-                            
+
                             { /* Price Drop Down */}
                             <div class='flex px-5 pb-2' >
                                 <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Price</label>
