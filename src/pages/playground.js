@@ -183,10 +183,14 @@ function PlaygroundPage() {
         submitFormData.append("price", nameToColumnNumberConvert(priceField));
         submitFormData.append("MFRCode", nameToColumnNumberConvert(mfrCodeField));
 
-        submitFormData.append("categorySeparator", nameToColumnNumberConvert(categorySeparator));
-        submitFormData.append("subcategorySeparator", nameToColumnNumberConvert(subcategorySeparator));
-        submitFormData.append("top-levelcategorySeparator", nameToColumnNumberConvert(topLevelSeparator));
-        submitFormData.append("sharedcategorySeparator", nameToColumnNumberConvert(sharedSeparator));
+        submitFormData.append("categorySeparator", categorySeparator);
+        submitFormData.append("subcategorySeparator", subcategorySeparator);
+        submitFormData.append("top-levelcategorySeparator", topLevelSeparator);
+        submitFormData.append("sharedcategorySeparator", sharedSeparator);
+
+        submitFormData.append("categoryCounter", catCounter);
+        submitFormData.append("topLevelCategoryCounter", topLevelCounter);
+
 
         setMapFormData(submitFormData);
 
@@ -271,7 +275,6 @@ function PlaygroundPage() {
             //console.log("Top Level Category Field Var is " + topLevelFieldVar);   
             setIsDisabled(false); //enable fields
             console.log(isDisabled);
-            //disableText();
             setTextColor("w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2");
         }
         else
@@ -281,7 +284,10 @@ function PlaygroundPage() {
             //console.log("Subcategory Field Var is " + subcategoryFieldVar);
             //console.log("Top Level Category Field Var is " + topLevelFieldVar);   
             setIsDisabled(true); //disable fields
-            //disableText();
+            //document.getElementById("SharedSep").value = "";
+            //setSharedSeparator(null);
+            setTopLevelCounter(0); //reset index to 0
+            setCatCounter(0); //reset index to 0
             setTextColor("w-1/4 text-gray-300 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2"); //light gray text
         }    
 
@@ -436,7 +442,7 @@ function PlaygroundPage() {
                             {/*Category Separator*/}
                             <div class='flex px-5 pb-2' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Category Separator</label>
-                                <input type="text"  placeholder='Type separator here' class = 'pl-1' onChange={categorySeparatorFieldChange}></input>
+                                <input type="text" placeholder='Type separator here' class = 'pl-1' onChange={categorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Subcategories Drop Down */}
@@ -476,7 +482,7 @@ function PlaygroundPage() {
                             {/*Pop up separator if at least one category field matches*/}
                             <div id = "shareSep" class='flex px-5 pb-2' >
                                 <label  for="separator" class={textColor}>Shared Separator</label>
-                                <input type="text" disabled={isDisabled} placeholder='Type separator here' class = 'pl-1' onChange={sharedSeparatorFieldChange}></input>
+                                <input type="text" id="sharedSep" disabled={isDisabled} placeholder='Type separator here' class = 'pl-1' onChange={sharedSeparatorFieldChange}></input>
                             </div>
 
                             {/*Pop up for category counter index if at least one category field matches*/}
@@ -600,6 +606,12 @@ function PlaygroundPage() {
                             </p>
                             <p class="ml-4">
                                 Shared Separator: <b>{sharedSeparator}</b>
+                            </p>
+                            <p class="ml-4">
+                                Category Index: <b>{catCounter}</b>
+                            </p>
+                            <p class="ml-4">
+                                Top-Level Category Index: <b>{topLevelCounter}</b>
                             </p>
                             <p class="ml-4">
                                 Price: <b>{priceField}</b>
