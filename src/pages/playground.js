@@ -8,6 +8,8 @@ import readXlsxFile from 'read-excel-file'
 import { render } from 'react-dom'
 import reactDom from 'react-dom'
 import Papa from 'papaparse'
+const axios = require('axios');
+var csv = require('jquery-csv');
 
 
 const { SubMenu } = Menu;
@@ -50,27 +52,121 @@ function PlaygroundPage() {
     const [fileFormData, setFileFormData] = useState();
     const [mapFormData, setMapFormData] = useState();
 
+    const [categorySeparator, setCategorySeparator] = useState();
+    const [subcategorySeparator, setSubcategorySeparator] = useState();
+    const [topLevelSeparator, setTopLevelSeparator] = useState();
+    const [sharedSeparator, setSharedSeparator] = useState();
+
+    const [catCounter, setCatCounter] = useState(0); //for category index counter
+    const [topLevelCounter, setTopLevelCounter] = useState(0); //for top level index counter
+
+    const [isDisabled, setIsDisabled] = useState(true) //prop is initially disabled
+    const [textColor, setTextColor] = useState("gray w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2");
+
+    //const [Separators, setSeparators] = useState(false); //used for submit button to show separators
+
     //const [isURLfile, setIsURLfile] = useState();
+
+    // used to hold new state
+    var categoryFieldVar;
+    var subcategoryFieldVar;
+    var topLevelFieldVar;
+
+    const parseFile = (file) => {
+        if (uploadFile.name.endsWith('.xlsx')) {
+            console.log("Currently looking at " + uploadFile.name); //this.state.uploadFile.name will show uploaded file name. testing
+            console.log("input file is xlsx");
+            readXlsxFile(uploadFile).then((rows) => {
+
+                console.log(rows);
+                console.log("size row: " + rows[0].length);
+                let tempArray = [];
+
+                for (const cname of rows[0]) {
+                    tempArray.push(cname);
+                    console.log(cname);
+                }
+                setColumnNameArray([...tempArray]);
+                console.log("size list: " + columnNameArray.length);
+
+                /*
+                let columnMapCount = 0;
+                let rowCount = 1;
+                setFileFormData(new FormData());
+                while (rows[rowCount]) {
+                    for (const cell of rows[rowCount]) {
+                        fileFormData.append(columnNameArray[columnMapCount], cell);
+                        columnMapCount++;
+                    }
+                    columnMapCount = 0;
+                    rowCount++;
+                }
+                for (var value of fileFormData.values()) {
+                    console.log(value);
+                }
+                */
+            }) //end of readXlsxFile
+        } //end of if xlsx
+        else if (uploadFile.name.endsWith('.csv')) {
+            console.log("Currently looking at " + uploadFile.name); //uploadFile.name will show uploaded file name. testing
+            console.log("input file is csv");
+
+
+            Papa.parse(uploadFile, {
+                header: false, //header needs to be false or data is objects rather than array
+                complete: function (row) {
+                    console.log("Parsing complete:", row.data);
+                    console.log("row size " + row.data[0].length);
+                    console.log("row[0] is " + row.data[0]); //first row
+                    let tempArray = [];
+
+                    for (const cname of row.data[0]) {
+                        tempArray.push(cname);
+                        console.log(cname);
+                    } //end of for loop
+
+                    setColumnNameArray([...tempArray]);
+                    console.log("size list: " + columnNameArray.length);
+
+                } //end of complete
+            }) //end of papa parse
+
+
+        } //end of if csv 
+
+
+        for (const cname of columnNameArray) {
+            console.log(cname);
+        }
+    }
+
 
     React.useEffect(() => {
         console.log(uploadFile);
 
 
         if (!(uploadFile instanceof File)) {
-            console.log("BRUHUHRHUH");
-            let url = uploadFile;
-            /*
-            fetch(url)
-                .then((res) => { return res.blob(); })
-                .then((data) => {
-                    var a = document.createElement("a");
-                    a.href = window.URL.createObjectURL(data);
-                    a.download = "FILENAME";
-                    a.click();
+            // Upload link logic here
+            console.log(uploadFile);
+
+            axios.get('https://support.staffbase.com/hc/en-us/article_attachments/360009159392/access-code.csv')
+                .then(function (response) {
+                    // handle success
+                    console.log(response);
+                    //var result = $.csv.toObjects(response);
+                    //parseFile(result);
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .then(function () {
+                    // always executed
                 });
-                */
         }
         else if (isFileUploaded && uploadFile) {
+            parseFile(uploadFile);
+            /*
             if (uploadFile.name.endsWith('.xlsx')) {
                 console.log("Currently looking at " + uploadFile.name); //this.state.uploadFile.name will show uploaded file name. testing
                 console.log("input file is xlsx");
@@ -91,21 +187,18 @@ function PlaygroundPage() {
                     let columnMapCount = 0;
                     let rowCount = 1;
                     setFileFormData(new FormData());
-
                     while (rows[rowCount]) {
                         for (const cell of rows[rowCount]) {
                             fileFormData.append(columnNameArray[columnMapCount], cell);
                             columnMapCount++;
                         }
-
                         columnMapCount = 0;
                         rowCount++;
                     }
-
                     for (var value of fileFormData.values()) {
                         console.log(value);
                     }
-                    */
+                    
                 }) //end of readXlsxFile
             } //end of if xlsx
             else if (uploadFile.name.endsWith('.csv')) {
@@ -134,16 +227,21 @@ function PlaygroundPage() {
 
 
             } //end of if csv 
-
+                */
 
             for (const cname of columnNameArray) {
                 console.log(cname);
             }
 
         } //end of big if statement
-    }, [uploadFile]);
 
-    const childToParent = (childData, isURL) => {
+    }, [uploadFile]); //end of useEffect
+
+    const nameToColumnNumberConvert = (name) => {
+        return columnNameArray.indexOf(name);
+    }
+
+    const childToParent = (childData) => {
         setUploadFile(childData);
         setIsFileUploaded(true);
 
@@ -167,20 +265,43 @@ function PlaygroundPage() {
             Form Data Creation Here
         */
         var submitFormData = new FormData();
-        submitFormData.append("category", categoryField);
-        submitFormData.append("subcategories", subcategoriesField);
-        submitFormData.append("top-level-category", topLevelCategoryField);
-        submitFormData.append("price", priceField);
-        submitFormData.append("MFRCode", mfrCodeField);
+
+        submitFormData.append("category", nameToColumnNumberConvert(categoryField));
+        submitFormData.append("subcategories", nameToColumnNumberConvert(subcategoriesField));
+        submitFormData.append("top-level-category", nameToColumnNumberConvert(topLevelCategoryField));
+        submitFormData.append("price", nameToColumnNumberConvert(priceField));
+        submitFormData.append("MFRCode", nameToColumnNumberConvert(mfrCodeField));
+
+        submitFormData.append("categorySeparator", categorySeparator);
+        submitFormData.append("subcategorySeparator", subcategorySeparator);
+        submitFormData.append("top-levelcategorySeparator", topLevelSeparator);
+        submitFormData.append("sharedcategorySeparator", sharedSeparator);
+
+        submitFormData.append("categoryCounter", catCounter);
+        submitFormData.append("topLevelCategoryCounter", topLevelCounter);
+
+
         setMapFormData(submitFormData);
 
         // Also need for ignore and filter fields
         //mapFormData.append("category", );
         //mapFormData.append("category", );
 
-        for (var value of mapFormData.values()) {
+        for (var value of submitFormData.values()) {
             console.log(value);
         }
+
+        /*
+                //test if category, subcategory, or top level field matches
+                if(categoryField == subcategoriesField && subcategoriesField == topLevelCategoryField ) //all fields the same
+                {
+                    console.log("All fields are the same");
+                    //make dropdown with 3 options
+                }
+                else
+                    console.log("Not all same");
+                    //no dropdown needed
+        */
 
         /*
             API Requests here
@@ -188,21 +309,98 @@ function PlaygroundPage() {
         var request = new XMLHttpRequest();
         //request.open("POST", "http://foo.com/submitform.php");
         //request.send(formData);
+    } //end of submit button
+
+
+    React.useEffect(() => {
+        //console.log("categoryField is " + categoryField)
+        categoryFieldVar = categoryField;
+        //console.log("categoryFieldVar is " + categoryFieldVar)
+        //console.log("subcategoriesField is " + subcategoriesField)
+        subcategoryFieldVar = subcategoriesField;
+        //console.log("subcategoryFieldVar is " + subcategoryFieldVar)
+        //console.log("subcategoriesField is " + topLevelCategoryField)
+        topLevelFieldVar = topLevelCategoryField;
+        //console.log("subcategoryFieldVar is " + topLevelFieldVar)
+        isThreeToOne();
+    }, [categoryField, subcategoriesField, topLevelCategoryField]); //will run when categoryField changes
+
+    /*
+    React.useEffect(() => {
+        //console.log("categoryField is " + categoryField)
+        categoryFieldVar = categoryField;
+        //console.log("categoryFieldVar is " + categoryFieldVar)
+        //console.log("subcategoriesField is " + subcategoriesField)
+        subcategoryFieldVar = subcategoriesField;
+        //console.log("subcategoryFieldVar is " + subcategoryFieldVar)
+        //console.log("subcategoriesField is " + topLevelCategoryField)
+        topLevelFieldVar = topLevelCategoryField;
+        //console.log("subcategoryFieldVar is " + topLevelFieldVar)
+        isThreeToOne();
+    }, [subcategoriesField]); //will run when subcategoriesField changes
+
+    React.useEffect(() => {
+        //console.log("categoryField is " + categoryField)
+        categoryFieldVar = categoryField;
+        //console.log("categoryFieldVar is " + categoryFieldVar)
+        //console.log("subcategoriesField is " + subcategoriesField)
+        subcategoryFieldVar = subcategoriesField;
+        //console.log("subcategoryFieldVar is " + subcategoryFieldVar)
+        //console.log("subcategoriesField is " + topLevelCategoryField)
+        topLevelFieldVar = topLevelCategoryField;
+        //console.log("subcategoryFieldVar is " + topLevelFieldVar)
+        isThreeToOne();
+    }, [topLevelCategoryField]); //will run when topLevelCategoryField changes
+*/
+
+    function isThreeToOne() {
+
+        //test if category, subcategory, or top level field matches
+        // if(categoryField == subcategoriesField && subcategoriesField == topLevelCategoryField ) //all fields the same
+        if (categoryFieldVar == subcategoryFieldVar && subcategoryFieldVar == topLevelFieldVar && typeof categoryFieldVar != 'undefined') {
+            console.log("All fields are the same");
+            //console.log("Category Field Var is " + categoryFieldVar);
+            //console.log("Subcategory Field Var is " + subcategoryFieldVar);
+            //console.log("Top Level Category Field Var is " + topLevelFieldVar);   
+            setIsDisabled(false); //enable fields
+            console.log(isDisabled);
+            setTextColor("w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2");
+        }
+        else {
+            console.log("Not all same");
+            //console.log("Category Field Var is " + categoryFieldVar);
+            //console.log("Subcategory Field Var is " + subcategoryFieldVar);
+            //console.log("Top Level Category Field Var is " + topLevelFieldVar);   
+            setIsDisabled(true); //disable fields
+            //document.getElementById("SharedSep").value = "";
+            //setSharedSeparator(null);
+            setTopLevelCounter(0); //reset index to 0
+            setCatCounter(0); //reset index to 0
+            setSharedSeparator("");
+            setTextColor("w-1/4 text-gray-300 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2"); //light gray text
+        }
+
     }
 
     const onCategoryFieldChange = (e) => {
-        if (e)
+        if (e) {
             setCategoryField(e.target.value);
+            //console.log("e.target.value Cat is " + e.target.value);
+        }
     }
 
     const onSubcategoriesFieldChange = (e) => {
-        if (e)
+        if (e) {
             setSubCategoriesField(e.target.value);
+            //console.log("e.target.value Sub is " + e.target.value);
+        }
     }
 
     const onTopLevelCategoryFieldChange = (e) => {
-        if (e)
+        if (e) {
             setTopLevelCategoryField(e.target.value);
+            //console.log("e.target.value TLC is " + e.target.value);
+        }
     }
 
     const onPriceFieldChange = (e) => {
@@ -243,6 +441,58 @@ function PlaygroundPage() {
         }
     }
 
+    function categorySeparatorFieldChange(val) {
+        setCategorySeparator(val.target.value) //get value of textbox
+    }
+
+    function subcategorySeparatorFieldChange(val) {
+        setSubcategorySeparator(val.target.value)
+    }
+
+    function topLevelSeparatorFieldChange(val) {
+        setTopLevelSeparator(val.target.value)
+    }
+
+    function sharedSeparatorFieldChange(val) {
+        setSharedSeparator(val.target.value)
+    }
+
+    const incrementCatCounter = (e) => {
+        setCatCounter(catCounter + 1);
+    }
+
+    const decrementCatCounter = (e) => {
+        //if counter > 0 --> decrement
+        if (catCounter > 0) {
+            setCatCounter(catCounter - 1);
+        }
+        else
+            console.log("Index cannot be below 0");
+    }
+
+    const resetCatCounter = (e) => {
+        setCatCounter(0);
+    }
+
+    const incrementTopLevelCounter = (e) => {
+        setTopLevelCounter(topLevelCounter + 1);
+
+    }
+
+    const decrementTopLevelCounter = (e) => {
+        //if counter > 0 --> decrement
+        if (topLevelCounter > 0) {
+            setTopLevelCounter(topLevelCounter - 1);
+        }
+        else
+            console.log("Index cannot be below 0");
+    }
+
+    const resetTopLevelCounter = (e) => {
+        setTopLevelCounter(0);
+    }
+
+
 
     return (
 
@@ -273,6 +523,12 @@ function PlaygroundPage() {
                                 </select>
                             </div>
 
+                            {/*Category Separator*/}
+                            <div class='flex px-5 pb-2' >
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Category Separator</label>
+                                <input type="text" placeholder='Type separator here' class='pl-1' onChange={categorySeparatorFieldChange}></input>
+                            </div>
+
                             { /* Subcategories Drop Down */}
                             <div class='flex px-5 pb-2' >
                                 <label for="dropdownboxes" className="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Subcategories</label>
@@ -284,15 +540,53 @@ function PlaygroundPage() {
                                 </select>
                             </div>
 
+                            {/*Subcategory Separator*/}
+                            <div class='flex px-5 pb-2' >
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Subcategory Separator</label>
+                                <input type="text" placeholder='Type separator here' class='pl-1' onChange={subcategorySeparatorFieldChange}></input>
+                            </div>
+
                             { /* Top-level Category Drop Down */}
                             <div class='flex px-5 pb-2' >
-                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Top-Level Category</label>
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category</label>
 
                                 <select onChange={onTopLevelCategoryFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0" disabled={!isFileUploaded ? true : null}>
                                     {columnNameArray.map((cname) => {
                                         return <option key={cname} value={cname}>{cname}</option>
                                     })}
                                 </select>
+                            </div>
+
+                            {/*Top-level Separator*/}
+                            <div class='flex px-5 pb-2' >
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category Separator</label>
+                                <input type="text" placeholder='Type separator here' class='pl-1' onChange={topLevelSeparatorFieldChange}></input>
+                            </div>
+
+                            {/*Pop up separator if at least one category field matches*/}
+                            <div id="shareSep" class='flex px-5 pb-2' >
+                                <label for="separator" class={textColor}>Shared Separator</label>
+                                <input type="text" id="sharedSep" disabled={isDisabled} placeholder='Type separator here' class='pl-1' onChange={sharedSeparatorFieldChange} value={sharedSeparator}></input>
+                            </div>
+
+                            {/*Pop up for category counter index if at least one category field matches*/}
+                            <div id="catMatch" class='flex px-5 pb-2' >
+                                <label class={textColor}>Category Index</label>
+                                {/*put counter box here */}
+                                <Button disabled={isDisabled} onClick={decrementCatCounter}>-</Button>
+                                <h3 for="counter display" class="pl-2 pr-2 text-gray-800 text-lg font-bold" >{catCounter}</h3>
+                                <Button disabled={isDisabled} onClick={incrementCatCounter}>+</Button>
+                                <Button disabled={isDisabled} onClick={resetCatCounter}>Reset</Button>
+                            </div>
+
+                            {/*Pop up for top level category counter index if at least one category field matches*/}
+                            <div id="topMatch" class='flex px-5 pb-2' >
+                                <label class={textColor}>Top-Level Category Index</label>
+                                {/*put counter box here */}
+                                <Button disabled={isDisabled} onClick={decrementTopLevelCounter}>-</Button>
+                                <h3 for="counter display" class="pl-2 pr-2 text-gray-800 text-lg font-bold" >{topLevelCounter}</h3>
+                                <Button disabled={isDisabled} onClick={incrementTopLevelCounter}>+</Button>
+                                <Button disabled={isDisabled} onClick={resetTopLevelCounter}>Reset</Button>
                             </div>
 
                             { /* Price Drop Down */}
@@ -380,10 +674,28 @@ function PlaygroundPage() {
                                 Category: <b>{categoryField}</b>
                             </p>
                             <p class="ml-4">
+                                Category Separator: <b>{categorySeparator}</b>
+                            </p>
+                            <p class="ml-4">
                                 Subcategories: <b>{subcategoriesField}</b>
                             </p>
                             <p class="ml-4">
+                                Subategory Separator: <b>{subcategorySeparator}</b>
+                            </p>
+                            <p class="ml-4">
                                 Top-Level Category: <b>{topLevelCategoryField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Top-Level Category Separator: <b>{topLevelSeparator}</b>
+                            </p>
+                            <p class="ml-4">
+                                Shared Separator: <b>{sharedSeparator}</b>
+                            </p>
+                            <p class="ml-4">
+                                Category Index: <b>{catCounter}</b>
+                            </p>
+                            <p class="ml-4">
+                                Top-Level Category Index: <b>{topLevelCounter}</b>
                             </p>
                             <p class="ml-4">
                                 Price: <b>{priceField}</b>
@@ -425,6 +737,6 @@ function PlaygroundPage() {
         </div >
     )
 
-}
+} //end of Playground
 
 export default PlaygroundPage
