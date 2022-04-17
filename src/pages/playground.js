@@ -8,6 +8,8 @@ import readXlsxFile from 'read-excel-file'
 import { render } from 'react-dom'
 import reactDom from 'react-dom'
 import Papa from 'papaparse'
+const axios = require('axios');
+var csv = require('jquery-csv');
 
 
 const { SubMenu } = Menu;
@@ -70,14 +72,101 @@ function PlaygroundPage() {
     var subcategoryFieldVar;
     var topLevelFieldVar;
 
+    const parseFile = (file) => {
+        if (uploadFile.name.endsWith('.xlsx')) {
+            console.log("Currently looking at " + uploadFile.name); //this.state.uploadFile.name will show uploaded file name. testing
+            console.log("input file is xlsx");
+            readXlsxFile(uploadFile).then((rows) => {
+
+                console.log(rows);
+                console.log("size row: " + rows[0].length);
+                let tempArray = [];
+
+                for (const cname of rows[0]) {
+                    tempArray.push(cname);
+                    console.log(cname);
+                }
+                setColumnNameArray([...tempArray]);
+                console.log("size list: " + columnNameArray.length);
+
+                /*
+                let columnMapCount = 0;
+                let rowCount = 1;
+                setFileFormData(new FormData());
+                while (rows[rowCount]) {
+                    for (const cell of rows[rowCount]) {
+                        fileFormData.append(columnNameArray[columnMapCount], cell);
+                        columnMapCount++;
+                    }
+                    columnMapCount = 0;
+                    rowCount++;
+                }
+                for (var value of fileFormData.values()) {
+                    console.log(value);
+                }
+                */
+            }) //end of readXlsxFile
+        } //end of if xlsx
+        else if (uploadFile.name.endsWith('.csv')) {
+            console.log("Currently looking at " + uploadFile.name); //uploadFile.name will show uploaded file name. testing
+            console.log("input file is csv");
+
+
+            Papa.parse(uploadFile, {
+                header: false, //header needs to be false or data is objects rather than array
+                complete: function (row) {
+                    console.log("Parsing complete:", row.data);
+                    console.log("row size " + row.data[0].length);
+                    console.log("row[0] is " + row.data[0]); //first row
+                    let tempArray = [];
+
+                    for (const cname of row.data[0]) {
+                        tempArray.push(cname);
+                        console.log(cname);
+                    } //end of for loop
+
+                    setColumnNameArray([...tempArray]);
+                    console.log("size list: " + columnNameArray.length);
+
+                } //end of complete
+            }) //end of papa parse
+
+
+        } //end of if csv 
+
+
+        for (const cname of columnNameArray) {
+            console.log(cname);
+        }
+    }
+
+
     React.useEffect(() => {
         console.log(uploadFile);
 
 
         if (!(uploadFile instanceof File)) {
             // Upload link logic here
+            console.log(uploadFile);
+
+            axios.get('https://support.staffbase.com/hc/en-us/article_attachments/360009159392/access-code.csv')
+                .then(function (response) {
+                    // handle success
+                    console.log(response);
+                    //var result = $.csv.toObjects(response);
+                    //parseFile(result);
+                })
+                .catch(function (error) {
+                    // handle error
+                    console.log(error);
+                })
+                .then(function () {
+                    // always executed
+                });
         }
         else if (isFileUploaded && uploadFile) {
+            parseFile(uploadFile);
+            /*
             if (uploadFile.name.endsWith('.xlsx')) {
                 console.log("Currently looking at " + uploadFile.name); //this.state.uploadFile.name will show uploaded file name. testing
                 console.log("input file is xlsx");
@@ -109,7 +198,7 @@ function PlaygroundPage() {
                     for (var value of fileFormData.values()) {
                         console.log(value);
                     }
-                    */
+                    
                 }) //end of readXlsxFile
             } //end of if xlsx
             else if (uploadFile.name.endsWith('.csv')) {
@@ -138,7 +227,7 @@ function PlaygroundPage() {
 
 
             } //end of if csv 
-
+                */
 
             for (const cname of columnNameArray) {
                 console.log(cname);
@@ -152,7 +241,7 @@ function PlaygroundPage() {
         return columnNameArray.indexOf(name);
     }
 
-    const childToParent = (childData, isURL) => {
+    const childToParent = (childData) => {
         setUploadFile(childData);
         setIsFileUploaded(true);
 
@@ -218,8 +307,9 @@ function PlaygroundPage() {
             API Requests here
         */
         var request = new XMLHttpRequest();
-        //request.open("POST", "http://foo.com/submitform.php");
-        //request.send(formData);
+        request.open("POST", "http://localhost:8000");
+        request.send(submitFormData);
+        console.log(request.response);
     } //end of submit button
 
 
@@ -235,34 +325,6 @@ function PlaygroundPage() {
         //console.log("subcategoryFieldVar is " + topLevelFieldVar)
         isThreeToOne();
     }, [categoryField, subcategoriesField, topLevelCategoryField]); //will run when categoryField changes
-
-    /*
-    React.useEffect(() => {
-        //console.log("categoryField is " + categoryField)
-        categoryFieldVar = categoryField;
-        //console.log("categoryFieldVar is " + categoryFieldVar)
-        //console.log("subcategoriesField is " + subcategoriesField)
-        subcategoryFieldVar = subcategoriesField;
-        //console.log("subcategoryFieldVar is " + subcategoryFieldVar)
-        //console.log("subcategoriesField is " + topLevelCategoryField)
-        topLevelFieldVar = topLevelCategoryField;
-        //console.log("subcategoryFieldVar is " + topLevelFieldVar)
-        isThreeToOne();
-    }, [subcategoriesField]); //will run when subcategoriesField changes
-
-    React.useEffect(() => {
-        //console.log("categoryField is " + categoryField)
-        categoryFieldVar = categoryField;
-        //console.log("categoryFieldVar is " + categoryFieldVar)
-        //console.log("subcategoriesField is " + subcategoriesField)
-        subcategoryFieldVar = subcategoriesField;
-        //console.log("subcategoryFieldVar is " + subcategoryFieldVar)
-        //console.log("subcategoriesField is " + topLevelCategoryField)
-        topLevelFieldVar = topLevelCategoryField;
-        //console.log("subcategoryFieldVar is " + topLevelFieldVar)
-        isThreeToOne();
-    }, [topLevelCategoryField]); //will run when topLevelCategoryField changes
-*/
 
     function isThreeToOne() {
 
@@ -407,27 +469,25 @@ function PlaygroundPage() {
 
     return (
 
-        <div class="screen bg-gradient-to-r from-amber-500 to-rose-900"> {/* Example of full screen coloring with "screen" class (indigo 400)*/}
+        <div class="screen bg-slate-700"> {/* Example of full screen coloring with "screen" class (indigo 400)*/}
 
             <div class="py-12 transition duration-150 ease-in-out z-10 top-0 right-0 bottom-0 left-0" id="modal">
-                <h1 class='text-7xl center-self mt-6 mb-10 place-self-stretch'>
-                    😳 playground 😳
-                </h1>
                 <div role="alert" class="container mx-auto w-4/6 max-w-2xl">
-                    <div class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400"> {/* Show color change here */}
+                    <div class="relative py-8 px-5 md:px-10 bg-white shadow-md rounded border border-gray-400 content-center"> {/* Show color change here */}
 
                         { /* Title Card */}
-                        <h1 class="text-gray-800 font-lg font-bold tracking-normal leading-tight mb-4 text-2xl">Unthink AI Product Upload</h1>
+                        <h1 class="text-gray-800 font-lg font-bold tracking-normal leading-tight mb-4 text-2xl text-center">Unthink AI Product Upload</h1>
 
                         { /* Upload file/drag or enter link */}
                         <BrowseFileOrLink childToParent={childToParent} ></BrowseFileOrLink>
 
                         <div class="grid cols-2">
                             { /* Category Drop Down */}
-                            <div class='flex px-5 pb-2 pt-5' >
-                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end">Category</label>
+                            <div class='flex px-5 pb-2 pt-5 justify-between' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Category</label>
 
-                                <select onChange={onCategoryFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4" disabled={!isFileUploaded ? true : null}>
+                                <select defaultValue="" onChange={onCategoryFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-6/12 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
                                     {columnNameArray.map((cname) => {
                                         return <option key={cname} value={cname}>{cname}</option>
                                     })}
@@ -435,16 +495,17 @@ function PlaygroundPage() {
                             </div>
 
                             {/*Category Separator*/}
-                            <div class='flex px-5 pb-2' >
-                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Category Separator</label>
-                                <input type="text" placeholder='Type separator here' class='pl-1' onChange={categorySeparatorFieldChange}></input>
+                            <div class='flex px-5 pb-2 justify-between' >
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2 ">Category Separator</label>
+                                <input type="text" placeholder='Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={categorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Subcategories Drop Down */}
-                            <div class='flex px-5 pb-2' >
+                            <div class='flex px-5 pb-2 justify-between' >
                                 <label for="dropdownboxes" className="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Subcategories</label>
 
-                                <select onChange={onSubcategoriesFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4" disabled={!isFileUploaded ? true : null}>
+                                <select defaultValue="" onChange={onSubcategoriesFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-6/12 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
                                     {columnNameArray.map((cname) => {
                                         return <option key={cname} value={cname}>{cname}</option>
                                     })}
@@ -452,16 +513,17 @@ function PlaygroundPage() {
                             </div>
 
                             {/*Subcategory Separator*/}
-                            <div class='flex px-5 pb-2' >
+                            <div class='flex px-5 pb-2 justify-between' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Subcategory Separator</label>
-                                <input type="text" placeholder='Type separator here' class='pl-1' onChange={subcategorySeparatorFieldChange}></input>
+                                <input type="text" placeholder='Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={subcategorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Top-level Category Drop Down */}
-                            <div class='flex px-5 pb-2' >
-                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category</label>
+                            <div class='flex px-5 pb-2 justify-between' >
+                                <label for="dropdownboxes" className="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Top-Level Category</label>
 
-                                <select onChange={onTopLevelCategoryFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0" disabled={!isFileUploaded ? true : null}>
+                                <select defaultValue="" onChange={onTopLevelCategoryFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-6/12 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option> 
                                     {columnNameArray.map((cname) => {
                                         return <option key={cname} value={cname}>{cname}</option>
                                     })}
@@ -469,42 +531,50 @@ function PlaygroundPage() {
                             </div>
 
                             {/*Top-level Separator*/}
-                            <div class='flex px-5 pb-2' >
+                            <div class='flex px-5 pb-2 justify-between' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category Separator</label>
-                                <input type="text" placeholder='Type separator here' class='pl-1' onChange={topLevelSeparatorFieldChange}></input>
+                                <input type="text" placeholder='Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={topLevelSeparatorFieldChange}></input>
                             </div>
 
                             {/*Pop up separator if at least one category field matches*/}
-                            <div id="shareSep" class='flex px-5 pb-2' >
+                            <div id="shareSep" class='flex px-5 pb-2 justify-between' >
                                 <label for="separator" class={textColor}>Shared Separator</label>
-                                <input type="text" id="sharedSep" disabled={isDisabled} placeholder='Type separator here' class='pl-1' onChange={sharedSeparatorFieldChange} value={sharedSeparator}></input>
+                                <input type="text" id="sharedSep" disabled={isDisabled} placeholder='Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={sharedSeparatorFieldChange} value={sharedSeparator}></input>
                             </div>
 
                             {/*Pop up for category counter index if at least one category field matches*/}
-                            <div id="catMatch" class='flex px-5 pb-2' >
+                            <div id="catMatch" class='flex px-5 pb-2 justify-between' >
                                 <label class={textColor}>Category Index</label>
                                 {/*put counter box here */}
-                                <Button disabled={isDisabled} onClick={decrementCatCounter}>-</Button>
-                                <h3 for="counter display" class="pl-2 pr-2 text-gray-800 text-lg font-bold" >{catCounter}</h3>
-                                <Button disabled={isDisabled} onClick={incrementCatCounter}>+</Button>
-                                <Button disabled={isDisabled} onClick={resetCatCounter}>Reset</Button>
+                                <div class="flex w-2/5">
+                                    <Button disabled={isDisabled} onClick={decrementCatCounter}>-</Button>
+                                    <h3 for="counter display" class="pl-2 pr-2 text-gray-800 text-lg font-bold" >{catCounter}</h3>
+                                    <Space>
+                                        <Button disabled={isDisabled} onClick={incrementCatCounter}>+</Button>
+                                        <Button disabled={isDisabled} onClick={resetCatCounter}>Reset</Button>
+                                    </Space>
+                                </div>
                             </div>
 
                             {/*Pop up for top level category counter index if at least one category field matches*/}
-                            <div id="topMatch" class='flex px-5 pb-2' >
+                            <div id="topMatch" class='flex px-5 pb-2 justify-between' >
                                 <label class={textColor}>Top-Level Category Index</label>
                                 {/*put counter box here */}
-                                <Button disabled={isDisabled} onClick={decrementTopLevelCounter}>-</Button>
-                                <h3 for="counter display" class="pl-2 pr-2 text-gray-800 text-lg font-bold" >{topLevelCounter}</h3>
-                                <Button disabled={isDisabled} onClick={incrementTopLevelCounter}>+</Button>
-                                <Button disabled={isDisabled} onClick={resetTopLevelCounter}>Reset</Button>
+                                <div class="flex w-2/5">
+                                    <Button disabled={isDisabled} onClick={decrementTopLevelCounter}>-</Button>
+                                    <h3 for="counter display" class="pl-2 pr-2 text-gray-800 text-lg font-bold" >{topLevelCounter}</h3>
+                                    <Space>
+                                        <Button disabled={isDisabled} onClick={incrementTopLevelCounter}>+</Button>
+                                        <Button disabled={isDisabled} onClick={resetTopLevelCounter}>Reset</Button>
+                                    </Space>
+                                </div>
                             </div>
 
                             { /* Price Drop Down */}
                             <div class='flex px-5 pb-2' >
                                 <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Price</label>
 
-                                <select onChange={onPriceFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0" disabled={!isFileUploaded ? true : null}>
+                                <select onChange={onPriceFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
                                     {columnNameArray.map((cname) => {
                                         return <option key={cname} value={cname}>{cname}</option>
                                     })}
@@ -515,7 +585,7 @@ function PlaygroundPage() {
                             <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
                                 <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">MFR Code</label>
 
-                                <select onChange={onMFRCodeFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0" disabled={!isFileUploaded ? true : null}>
+                                <select onChange={onMFRCodeFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
                                     {columnNameArray.map((cname) => {
                                         return <option key={cname} value={cname}>{cname}</option>
                                     })}
@@ -530,7 +600,7 @@ function PlaygroundPage() {
                                 <div class="relative flex w-full">
                                     <label class="w-full">
 
-                                        <select onChange={onIgnoreFieldsChange} class="w-full block mt-1 form-multiselect" multiple="true" disabled={!isFileUploaded ? true : null}>
+                                        <select onChange={onIgnoreFieldsChange} class="w-full block mt-1 form-multiselect border-solid border-2" multiple="true" disabled={!isFileUploaded ? true : null}>
                                             {columnNameArray.map((cname) => {
                                                 return <option key={cname} value={cname}>{cname}</option>
                                             })}
@@ -554,7 +624,7 @@ function PlaygroundPage() {
                                 <div class="relative flex w-full">
                                     <label class="w-full">
 
-                                        <select onChange={onFilterFieldsChange} class="block w-full mt-1 form-multiselect" multiple="true" disabled={!isFileUploaded ? true : null}>
+                                        <select onChange={onFilterFieldsChange} class="block w-full mt-1 form-multiselect border-solid border-2" multiple="true" disabled={!isFileUploaded ? true : null}>
                                             {columnNameArray.map((cname) => {
                                                 return <option key={cname} value={cname}>{cname}</option>
                                             })}
@@ -563,6 +633,9 @@ function PlaygroundPage() {
                                 </div>
                             </div>
                         </div>
+
+
+                        <h1 class="text-gray-800 font-bold tracking-normal leading-tight mb-4 text-lg text-center">Optional fields:</h1>
 
 
 
@@ -574,7 +647,7 @@ function PlaygroundPage() {
                             </button>
                             <button class="focus:outline-none focus:ring-2 focus:ring-offset-2  focus:ring-gray-400 ml-3 bg-gray-100 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border rounded px-8 py-2 text-sm mt-6" onclick="modalHandler()">
                                 <Link to="/" class="text-neutral 500">
-                                    Cancel (returns to index page)
+                                    Back
                                 </Link>
                             </button>
                         </div>
@@ -621,15 +694,6 @@ function PlaygroundPage() {
                                 Filter Fields: <b>{filterFieldsList}</b>
                             </p>
                         </div>
-
-                        { /* Exit button */}
-                        <button class="cursor-pointer absolute top-0 right-0 mt-4 mr-5 text-gray-400 hover:text-gray-600 transition duration-150 ease-in-out rounded focus:ring-2 focus:outline-none focus:ring-gray-600" onclick="modalHandler()" aria-label="close modal" role="button">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-x" width="20" height="20" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path stroke="none" d="M0 0h24v24H0z" />
-                                <line x1="18" y1="6" x2="6" y2="18" />
-                                <line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                        </button>
                     </div>
                 </div>
             </div>

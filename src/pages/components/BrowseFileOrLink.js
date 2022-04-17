@@ -12,47 +12,41 @@ export default function BrowseFileOrLink({ childToParent }) {
     //const readXlsxFile = require('read-excel-file/node')
 
     const changeHandler = (event) => {
-        setIsFilePicked(true);
-        setSelectedFile(event.target.files[0]);
-        childToParent(event.target.files[0]);
+        if (event.target.files[0]) {
+            setIsFilePicked(true);
+            setSelectedFile(event.target.files[0]);
+            childToParent(event.target.files[0]);
+        }
     };
 
+    const inputAdded = (event) => {
+        childToParent(event.target.value);
+    }
+
     return (
-        <div class="">
-            <div class='flex px-5 pb-4' >
+        <div class="grid grid-cols-1 grid-rows-3 justify-items-center">
+            <div class='flex px-5 pb-4 place-content-center' >
                 <Row>
                     <Space>
 
                         <Col>
-                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Upload file</label>
+                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal ">Upload file</label>
                         </Col>
                         <Col>
-                            <Input placeholder="Enter link here..." class='' />
+                            <Input placeholder="Enter link here..." onChange={inputAdded} class="border-solid border-2" />
                         </Col>
-
-                        <Col>
-                            <input type="file" onChange={changeHandler}></input>
-                            {/*<button onClick={e => fileInput.current && fileInput.current.click()} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" />
-                            
-                            <Upload accept='.csv, .xlsx, .xml'
-                                showUploadList={false}
-                                fileList={fileList}
-                                onChange={changeHandler}>
-                                <Button type='upload' shape="round">
-                                    <UploadOutlined />Upload
-                                </Button>
-                            </Upload>
-    */}
-                        </Col>
-
 
                     </Space>
                 </Row>
+
             </div>
-            <div class="flex justify-center">
+
+            <input type="file" onChange={changeHandler} class=''></input>
+
+            <div class="flex justify-center border-solid border-2 p-5">
                 {isFilePicked ? (
                     <div class="text-center">
-                        <p>Filename: {selectedFile.name}</p>
+                        <p>Filename: <b>{selectedFile.name}</b></p>
                         <p>Filetype: {selectedFile.type}</p>
                         <p>Size in bytes: {selectedFile.size}</p>
                         <p>
@@ -61,7 +55,7 @@ export default function BrowseFileOrLink({ childToParent }) {
                         </p>
                     </div>
                 ) : (
-                    <p>Select a file to show details</p>
+                    <p class="">Select a file to show details</p>
                 )}
             </div>
 
