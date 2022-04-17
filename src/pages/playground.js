@@ -587,7 +587,7 @@ function PlaygroundPage() {
                                 <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">MFR Code</label>
 
                                 <select defaultValue="" onChange={onMFRCodeFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
-                                    <option disabled={true} value="">Select from dropdown</option>
+                                <option disabled={true} value="">Select from dropdown</option>
                                     {columnNameArray.map((cname) => {
                                         return <option key={cname} value={cname}>{cname}</option>
                                     })}
@@ -598,7 +598,7 @@ function PlaygroundPage() {
                             { /* Ignore fields section */}
                             <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
                                 <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Ignore Fields</label>
-
+                                
                                 <div class="relative flex w-full">
                                     <label class="w-full">
 

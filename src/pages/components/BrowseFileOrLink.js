@@ -24,13 +24,13 @@ export default function BrowseFileOrLink({ childToParent }) {
     }
 
     return (
-        <div class="grid grid-cols-1 grid-rows-3 justify-items-center">
+        <div>
             <div class='flex px-5 pb-4 place-content-center' >
                 <Row>
                     <Space>
 
                         <Col>
-                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal ">Upload file</label>
+                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Upload file</label>
                         </Col>
                         <Col>
                             <Input placeholder="Enter link here..." onChange={inputAdded} class="border-solid border-2" />
@@ -40,9 +40,9 @@ export default function BrowseFileOrLink({ childToParent }) {
                 </Row>
 
             </div>
-
-            <input type="file" onChange={changeHandler} class=''></input>
-
+            <div class ="text-center pb-4">
+                <input type="file" onChange={changeHandler} class=""></input>
+            </div>
             <div class="flex justify-center border-solid border-2 p-5">
                 {isFilePicked ? (
                     <div class="text-center">
