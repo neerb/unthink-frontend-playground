@@ -497,7 +497,7 @@ function PlaygroundPage() {
                             {/*Category Separator*/}
                             <div class='flex px-5 pb-2 justify-between' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2 ">Category Separator</label>
-                                <input type="text" placeholder='Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={categorySeparatorFieldChange}></input>
+                                <input type="text" placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={categorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Subcategories Drop Down */}
@@ -515,7 +515,7 @@ function PlaygroundPage() {
                             {/*Subcategory Separator*/}
                             <div class='flex px-5 pb-2 justify-between' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Subcategory Separator</label>
-                                <input type="text" placeholder='Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={subcategorySeparatorFieldChange}></input>
+                                <input type="text" placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={subcategorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Top-level Category Drop Down */}
@@ -533,13 +533,13 @@ function PlaygroundPage() {
                             {/*Top-level Separator*/}
                             <div class='flex px-5 pb-2 justify-between' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category Separator</label>
-                                <input type="text" placeholder='Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={topLevelSeparatorFieldChange}></input>
+                                <input type="text" placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={topLevelSeparatorFieldChange}></input>
                             </div>
 
                             {/*Pop up separator if at least one category field matches*/}
                             <div id="shareSep" class='flex px-5 pb-2 justify-between' >
                                 <label for="separator" class={textColor}>Shared Separator</label>
-                                <input type="text" id="sharedSep" disabled={isDisabled} placeholder='Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={sharedSeparatorFieldChange} value={sharedSeparator}></input>
+                                <input type="text" id="sharedSep" disabled={isDisabled} placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={sharedSeparatorFieldChange} value={sharedSeparator}></input>
                             </div>
 
                             {/*Pop up for category counter index if at least one category field matches*/}
