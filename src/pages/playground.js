@@ -598,8 +598,9 @@ function PlaygroundPage() {
                             { /* Ignore fields section */}
                             <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
                                 <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Ignore Fields</label>
+                                <button class="w-5 h-4 rounded-full text-gray-100 text-xs bg-sky-500 hover:bg-sky-600">?</button>
                                 
-                                <div class="relative flex w-full">
+                                <div class="relative flex w-full pl-2">
                                     <label class="w-full">
 
                                         <select onChange={onIgnoreFieldsChange} class="w-full block mt-1 form-multiselect border-solid border-2" multiple="true" disabled={!isFileUploaded ? true : null}>
