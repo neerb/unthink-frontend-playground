@@ -40,7 +40,7 @@ export default function BrowseFileOrLink({ childToParent }) {
                 </Row>
 
             </div>
-            <div class ="text-center pb-4">
+            <div class="text-center pb-4">
                 <input type="file" onChange={changeHandler} class=""></input>
             </div>
             <div class="flex justify-center border-solid border-2 p-5">

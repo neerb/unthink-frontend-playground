@@ -1,5 +1,5 @@
 import React, { Component, useState, useRef, useEffect } from 'react'
-import { Menu, Dropdown, Icon, Upload, Divider } from 'antd'
+import { Menu, Dropdown, Icon, Upload, Divider, Popover } from 'antd'
 import { Link } from 'gatsby'
 import BrowseFileOrLink from './components/BrowseFileOrLink'
 import { Input, Button, Space, Row, Col } from 'antd'
@@ -46,9 +46,18 @@ function PlaygroundPage() {
     const [topLevelCategoryField, setTopLevelCategoryField] = useState();
     const [priceField, setPriceField] = useState();
     const [mfrCodeField, setMfrCodeField] = useState();
+    const [nameField, setNameField] = useState();
+    const [descField, setDescField] = useState();
+    const [listPriceField, setListPriceField] = useState();
+    const [productTypeField, setProductTypeField] = useState();
+    const [imageField, setImageField] = useState();
+    const [urlField, setUrlField] = useState();
+    const [currencyField, setCurrencyField] = useState();
+    const [brandField, setBrandField] = useState();
+    const [productBrandField, setProductBrandField] = useState();
+    const [availabilityField, setAvailabilityField] = useState();
+    const [genderField, setGenderField] = useState();
     const [ignoreFieldsList, setIgnoreFieldsList] = useState();
-    const [filterFieldsList, setFilterFieldsList] = useState();
-
     const [fileFormData, setFileFormData] = useState();
     const [mapFormData, setMapFormData] = useState();
 
@@ -56,6 +65,7 @@ function PlaygroundPage() {
     const [subcategorySeparator, setSubcategorySeparator] = useState();
     const [topLevelSeparator, setTopLevelSeparator] = useState();
     const [sharedSeparator, setSharedSeparator] = useState();
+    const [productTypeSeparator, setProductTypeSeparator] = useState();
 
     const [catCounter, setCatCounter] = useState(0); //for category index counter
     const [topLevelCounter, setTopLevelCounter] = useState(0); //for top level index counter
@@ -260,12 +270,15 @@ function PlaygroundPage() {
 
     }
 
+    const debug = true
+
     const submitButton = () => {
         /*
             Form Data Creation Here
         */
         var submitFormData = new FormData();
 
+        /*
         submitFormData.append("category", nameToColumnNumberConvert(categoryField));
         submitFormData.append("subcategories", nameToColumnNumberConvert(subcategoriesField));
         submitFormData.append("top-level-category", nameToColumnNumberConvert(topLevelCategoryField));
@@ -279,6 +292,64 @@ function PlaygroundPage() {
 
         submitFormData.append("categoryCounter", catCounter);
         submitFormData.append("topLevelCategoryCounter", topLevelCounter);
+        */
+
+        if (debug) {
+            submitFormData.append("file_raw", uploadFile);
+            submitFormData.append("name_col", 14);
+            submitFormData.append("descr_col", 4);
+            submitFormData.append("price_col", 16);
+            submitFormData.append("list_price_col", 12);
+            submitFormData.append("top_level_category_col", 6);
+            submitFormData.append("category_col", 6);
+            submitFormData.append("subcategories_col", 6);
+            submitFormData.append("top_level_category_sep", ">");
+            submitFormData.append("category_sep", ">");
+            submitFormData.append("subcategories_sep", ">");
+            submitFormData.append("product_type_col", 17);
+            submitFormData.append("product_type_sep", ">");
+            submitFormData.append("image_col", 8);
+            submitFormData.append("url_col", 18);
+            submitFormData.append("mfr_code_col", 7);
+            submitFormData.append("currency_col", 3);
+            submitFormData.append("brand_col", 2);
+            submitFormData.append("product_brand_col", 2);
+            submitFormData.append("avlble_col", 1);
+            submitFormData.append("gender_col", 5);
+            submitFormData.append("ignored_cols", "0,9");
+            submitFormData.append("top_level_category_index", 0);
+            submitFormData.append("category_index", 1);
+        }
+        else {
+            // Required
+            submitFormData.append("file_raw", uploadFile);
+            submitFormData.append("name_col", 14);
+            submitFormData.append("descr_col", 4);
+            //submitFormData.append("price_col", 16);
+            submitFormData.append("list_price_col", 12);
+            //submitFormData.append("top_level_category_col", 6);
+            //submitFormData.append("category_col", 6);
+            //submitFormData.append("subcategories_col", 6);
+            //submitFormData.append("top_level_category_sep", ">");
+            //submitFormData.append("category_sep", ">");
+            //submitFormData.append("subcategories_sep", ">");
+            submitFormData.append("product_type_col", 17);
+            submitFormData.append("product_type_sep", ">");
+            submitFormData.append("image_col", 8);
+            submitFormData.append("url_col", 18);
+            //submitFormData.append("mfr_code_col", 7);
+            submitFormData.append("currency_col", 3);
+            submitFormData.append("brand_col", 2);
+            submitFormData.append("product_brand_col", 2);
+            submitFormData.append("avlble_col", 1);
+            submitFormData.append("gender_col", 5);
+            //submitFormData.append("ignored_cols", "0,9");
+            //submitFormData.append("top_level_category_index", 0);
+            //submitFormData.append("category_index", 1);
+
+            // Optionals
+
+        }
 
 
         setMapFormData(submitFormData);
@@ -307,9 +378,17 @@ function PlaygroundPage() {
             API Requests here
         */
         var request = new XMLHttpRequest();
-        request.open("POST", "http://localhost:8000");
+        request.open("POST", "http://localhost:8000/api/upload/");
+        request.onreadystatechange = function (evt) {
+            if (request.readyState !== 4) {
+                return;
+            }
+            console.log("waited for it to finish")
+            console.log(request.response);
+        };
         request.send(submitFormData);
-        console.log(request.response);
+        let m = request.response;
+        console.log(m);
     } //end of submit button
 
 
@@ -376,14 +455,69 @@ function PlaygroundPage() {
         }
     }
 
+    const onMFRCodeFieldChange = (e) => {
+        if (e)
+            setMfrCodeField(e.target.value);
+    }
+
     const onPriceFieldChange = (e) => {
         if (e)
             setPriceField(e.target.value);
     }
 
-    const onMFRCodeFieldChange = (e) => {
+    const onNameFieldChange = (e) => {
         if (e)
-            setMfrCodeField(e.target.value);
+            setNameField(e.target.value);
+    }
+
+    const onDescFieldChange = (e) => {
+        if (e)
+            setDescField(e.target.value);
+    }
+
+    const onListPriceFieldChange = (e) => {
+        if (e)
+            setListPriceField(e.target.value);
+    }
+
+    const onProductTypeFieldChange = (e) => {
+        if (e)
+            setProductTypeField(e.target.value);
+    }
+
+    const onImageFieldChange = (e) => {
+        if (e)
+            setImageField(e.target.value);
+    }
+
+    const onUrlFieldChange = (e) => {
+        if (e)
+            setUrlField(e.target.value);
+    }
+
+    const onCurrencyFieldChange = (e) => {
+        if (e)
+            setCurrencyField(e.target.value);
+    }
+
+    const onBrandFieldChange = (e) => {
+        if (e)
+            setBrandField(e.target.value);
+    }
+
+    const onProductBrandFieldChange = (e) => {
+        if (e)
+            setProductBrandField(e.target.value);
+    }
+
+    const onAvailabilityFieldChange = (e) => {
+        if (e)
+            setAvailabilityField(e.target.value);
+    }
+
+    const onGenderFieldChange = (e) => {
+        if (e)
+            setGenderField(e.target.value);
     }
 
     const onIgnoreFieldsChange = (e) => {
@@ -400,19 +534,20 @@ function PlaygroundPage() {
         }
     }
 
-    const onFilterFieldsChange = (e) => {
-        if (e) {
-            var options = e.target.options;
-            var value = [];
-            for (var i = 0, l = options.length; i < l; i++) {
-                if (options[i].selected) {
-                    value.push(options[i].value);
-                }
-            }
+    const IgnoreFieldInfo = (
+        <div>
+            <p>This field is for ...</p>
+            <p>Ctrl + click to select multiple values.</p>
+        </div>
+      );
 
-            setFilterFieldsList(value);
-        }
-    }
+      const IndexInfo = (
+        <div>
+            <p>This field is for ...</p>
+            <p>Index starts count from 0</p>
+        </div>
+      );
+
 
     function categorySeparatorFieldChange(val) {
         setCategorySeparator(val.target.value) //get value of textbox
@@ -428,6 +563,10 @@ function PlaygroundPage() {
 
     function sharedSeparatorFieldChange(val) {
         setSharedSeparator(val.target.value)
+    }
+
+    function productTypeSeparatorFieldChange(val) {
+        setProductTypeSeparator(val.target.value)
     }
 
     const incrementCatCounter = (e) => {
@@ -478,12 +617,18 @@ function PlaygroundPage() {
                         { /* Title Card */}
                         <h1 class="text-gray-800 font-lg font-bold tracking-normal leading-tight mb-4 text-2xl text-center">Unthink AI Product Upload</h1>
 
+                        {/* Description */}
+                        <h3 class="text-center">Upload product catalog below.</h3>
+
                         { /* Upload file/drag or enter link */}
                         <BrowseFileOrLink childToParent={childToParent} ></BrowseFileOrLink>
 
+                        {/* Description */}
+                        <h3 class="mt-5 text-center">Use dropdowns below to map Unthink Inc's database fields to your uploaded product catalog's columns.</h3>
+
                         <div class="grid cols-2">
                             { /* Category Drop Down */}
-                            <div class='flex px-5 pb-2 pt-5 justify-between' >
+                            <div class='flex px-5 pb-2 pt-2 justify-between' >
                                 <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Category</label>
 
                                 <select defaultValue="" onChange={onCategoryFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-6/12 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
@@ -497,7 +642,7 @@ function PlaygroundPage() {
                             {/*Category Separator*/}
                             <div class='flex px-5 pb-2 justify-between' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2 ">Category Separator</label>
-                                <input type="text" placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={categorySeparatorFieldChange}></input>
+                                <input type="text" maxlength="1" placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={categorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Subcategories Drop Down */}
@@ -515,7 +660,7 @@ function PlaygroundPage() {
                             {/*Subcategory Separator*/}
                             <div class='flex px-5 pb-2 justify-between' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Subcategory Separator</label>
-                                <input type="text" placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={subcategorySeparatorFieldChange}></input>
+                                <input type="text" maxlength="1" placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={subcategorySeparatorFieldChange}></input>
                             </div>
 
                             { /* Top-level Category Drop Down */}
@@ -523,7 +668,7 @@ function PlaygroundPage() {
                                 <label for="dropdownboxes" className="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Top-Level Category</label>
 
                                 <select defaultValue="" onChange={onTopLevelCategoryFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-6/12 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
-                                    <option disabled={true} value="">Select from dropdown</option> 
+                                    <option disabled={true} value="">Select from dropdown</option>
                                     {columnNameArray.map((cname) => {
                                         return <option key={cname} value={cname}>{cname}</option>
                                     })}
@@ -533,18 +678,23 @@ function PlaygroundPage() {
                             {/*Top-level Separator*/}
                             <div class='flex px-5 pb-2 justify-between' >
                                 <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Top-Level Category Separator</label>
-                                <input type="text" placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={topLevelSeparatorFieldChange}></input>
+                                <input type="text" maxlength="1" placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={topLevelSeparatorFieldChange}></input>
                             </div>
 
                             {/*Pop up separator if at least one category field matches*/}
                             <div id="shareSep" class='flex px-5 pb-2 justify-between' >
                                 <label for="separator" class={textColor}>Shared Separator</label>
-                                <input type="text" id="sharedSep" disabled={isDisabled} placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={sharedSeparatorFieldChange} value={sharedSeparator}></input>
+                                <input type="text" maxlength="1" id="sharedSep" disabled={isDisabled} placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={sharedSeparatorFieldChange} value={sharedSeparator}></input>
                             </div>
 
                             {/*Pop up for category counter index if at least one category field matches*/}
                             <div id="catMatch" class='flex px-5 pb-2 justify-between' >
+                                <div>
                                 <label class={textColor}>Category Index</label>
+                                <Popover content={IndexInfo}> 
+                                    <Button size = "small" shape = "circle">?</Button>
+                                </Popover>
+                                </div>
                                 {/*put counter box here */}
                                 <div class="flex w-2/5">
                                     <Button disabled={isDisabled} onClick={decrementCatCounter}>-</Button>
@@ -558,7 +708,12 @@ function PlaygroundPage() {
 
                             {/*Pop up for top level category counter index if at least one category field matches*/}
                             <div id="topMatch" class='flex px-5 pb-2 justify-between' >
+                                <div> 
                                 <label class={textColor}>Top-Level Category Index</label>
+                                <Popover content={IndexInfo}> 
+                                    <Button size = "small" shape = "circle">?</Button>
+                                </Popover>
+                                </div>
                                 {/*put counter box here */}
                                 <div class="flex w-2/5">
                                     <Button disabled={isDisabled} onClick={decrementTopLevelCounter}>-</Button>
@@ -587,7 +742,145 @@ function PlaygroundPage() {
                                 <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">MFR Code</label>
 
                                 <select defaultValue="" onChange={onMFRCodeFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
-                                <option disabled={true} value="">Select from dropdown</option>
+                                    <option disabled={true} value="">Select from dropdown</option>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            { /* Name */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Name</label>
+
+                                <select defaultValue="" onChange={onNameFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            { /* Description */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Description</label>
+
+                                <select defaultValue="" onChange={onDescFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            { /* List Price */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">List Price</label>
+
+                                <select defaultValue="" onChange={onListPriceFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            { /* Product Type */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Product Type</label>
+
+                                <select defaultValue="" onChange={onProductTypeFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            {/* Product Type Separator*/}
+                            <div class='flex px-5 pb-2 justify-between' >
+                                <label for="separator" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2">Product Type Separator</label>
+                                <input type="text" maxlength="1" placeholder=' Type here...' class="mb-3 mx-4 w-1/4 right-0 top-0 border-solid border-2" onChange={productTypeSeparatorFieldChange}></input>
+                            </div>
+
+                            { /* Image */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Image</label>
+
+                                <select defaultValue="" onChange={onImageFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            { /* URL */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">URL</label>
+
+                                <select defaultValue="" onChange={onUrlFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            { /* Currency */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Currency</label>
+
+                                <select defaultValue="" onChange={onCurrencyFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            { /* Brand */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Brand</label>
+
+                                <select defaultValue="" onChange={onBrandFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            { /* Product Brand */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Product Brand</label>
+
+                                <select defaultValue="" onChange={onProductBrandFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            { /* Availability */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Availability</label>
+
+                                <select defaultValue="" onChange={onAvailabilityFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
+                                    {columnNameArray.map((cname) => {
+                                        return <option key={cname} value={cname}>{cname}</option>
+                                    })}
+                                </select>
+                            </div>
+
+                            { /* Gender */}
+                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Gender</label>
+
+                                <select defaultValue="" onChange={onGenderFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
+                                    <option disabled={true} value="">Select from dropdown</option>
                                     {columnNameArray.map((cname) => {
                                         return <option key={cname} value={cname}>{cname}</option>
                                     })}
@@ -597,9 +890,10 @@ function PlaygroundPage() {
 
                             { /* Ignore fields section */}
                             <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
-                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Ignore Fields</label>
-                                <button class="w-5 h-4 rounded-full text-gray-100 text-xs bg-sky-500 hover:bg-sky-600">?</button>
-                                
+                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Ignore Fields</label>
+                                <Popover content={IgnoreFieldInfo}> 
+                                    <Button size = "small" shape = "circle">?</Button>
+                                </Popover>
                                 <div class="relative flex w-full pl-2">
                                     <label class="w-full">
 
@@ -620,21 +914,6 @@ function PlaygroundPage() {
                             */}
                             </div>
 
-                            { /* Filter fields section */}
-                            <div class='flex px-5 pb-2 top-0 right-0 min-w-fit' >
-                                <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit mr-5">Filter Fields</label>
-
-                                <div class="relative flex w-full">
-                                    <label class="w-full">
-
-                                        <select onChange={onFilterFieldsChange} class="block w-full mt-1 form-multiselect border-solid border-2" multiple="true" disabled={!isFileUploaded ? true : null}>
-                                            {columnNameArray.map((cname) => {
-                                                return <option key={cname} value={cname}>{cname}</option>
-                                            })}
-                                        </select>
-                                    </label>
-                                </div>
-                            </div>
                         </div>
 
 
@@ -691,26 +970,49 @@ function PlaygroundPage() {
                                 MFR Code: <b>{mfrCodeField}</b>
                             </p>
                             <p class="ml-4">
-                                Ignore Fields: <b>{ignoreFieldsList}</b>
+                                Name: <b>{nameField}</b>
                             </p>
                             <p class="ml-4">
-                                Filter Fields: <b>{filterFieldsList}</b>
+                                Description: <b>{descField}</b>
+                            </p>
+                            <p class="ml-4">
+                                List Price: <b>{listPriceField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Product Type: <b>{productTypeField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Product Type Separator: <b>{productTypeSeparator}</b>
+                            </p>
+                            <p class="ml-4">
+                                Image: <b>{imageField}</b>
+                            </p>
+                            <p class="ml-4">
+                                URL: <b>{urlField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Currency: <b>{currencyField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Brand: <b>{brandField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Product Brand: <b>{productBrandField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Availability: <b>{availabilityField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Gender: <b>{genderField}</b>
+                            </p>
+                            <p class="ml-4">
+                                Ignore Fields: <b>{ignoreFieldsList}</b>
                             </p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="w-full flex justify-center py-12" id="button">
-            </div>
-
-            { /* Example alert at bottom of page */}
-            <div class="-m-2 text-center">
-                <div class="p-2">
-                    <div class="inline-flex items-center bg-white leading-none text-red-600 rounded-full p-2 shadow text-teal text-sm">
-                        <span class="inline-flex bg-red-600 text-white rounded-full h-6 px-3 justify-center items-center">Alert!</span>
-                        <span class="inline-flex px-2">You have reached the bottom of the page</span>
-                    </div>
-                </div>
             </div>
         </div >
     )
