@@ -41,7 +41,7 @@ export default function BrowseFileOrLink({ childToParent }) {
 
             </div>
             <div class="text-center pb-4">
-                <input type="file" onChange={changeHandler} class=""></input>
+                <input type="file" onChange={changeHandler} class="" accept=".csv, .xlsx"></input>
             </div>
             <div class="flex justify-center border-solid border-2 p-5">
                 {isFilePicked ? (
