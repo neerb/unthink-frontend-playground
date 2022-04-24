@@ -263,7 +263,7 @@ function PlaygroundPage() {
 
     }
 
-    const debug = false
+    const debug = true
 
     const submitButton = () => {
         /*
@@ -739,8 +739,16 @@ function PlaygroundPage() {
                                 </div>
                             </div>
 
+                            {/* Divider */}
+                            <div id="divider" class='flex px-5 pb-2 place-content-center' >
+                                <div class="justify-between grid grid-cols-1 divide-y divide-black w-10/12 h-3/6 my-5">
+                                    <div> </div>
+                                    <div> </div>
+                                </div>
+                            </div>
+
                             { /* Price Drop Down */}
-                            <div class='flex px-5 pb-2' >
+                            <div class='flex px-5 pb-2 mt-5' >
                                 <label for="dropdownboxes" class="w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit">Price</label>
 
                                 <select defaultValue="" onChange={onPriceFieldChange} name="selectList" id="selectList" class="mb-3 mx-4 w-3/4 right-0 top-0 border-solid border-2" disabled={!isFileUploaded ? true : null}>
