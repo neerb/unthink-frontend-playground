@@ -8,8 +8,8 @@ export default function BrowseFileOrLink({ childToParent }) {
 
     const [selectedFile, setSelectedFile] = useState();
     const [isFilePicked, setIsFilePicked] = useState(false);
-
-    //const readXlsxFile = require('read-excel-file/node')
+    const [disableUpload, setDisableUpload] = useState(false);
+    const [uploadLink, setUploadLink] = useState();
 
     const changeHandler = (event) => {
         if (event.target.files[0]) {
@@ -17,10 +17,26 @@ export default function BrowseFileOrLink({ childToParent }) {
             setSelectedFile(event.target.files[0]);
             childToParent(event.target.files[0]);
         }
+        else {
+            setIsFilePicked(true);
+            setSelectedFile(null);
+        }
     };
 
     const inputAdded = (event) => {
-        childToParent(event.target.value);
+
+        if (event.target.value) {
+            setDisableUpload(true);
+            setUploadLink(event.target.value);
+        }
+        else {
+            setDisableUpload(false);
+            setUploadLink(null);
+        }
+    }
+
+    const submitUploadLink = (event) => {
+        childToParent(uploadLink);
     }
 
     return (
@@ -30,18 +46,22 @@ export default function BrowseFileOrLink({ childToParent }) {
                     <Space>
 
                         <Col>
-                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Upload file</label>
+                            <label for="dropdownboxes" class="text-gray-800 text-sm font-bold leading-tight tracking-normal">Upload file (.csv only)</label>
                         </Col>
                         <Col>
-                            <Input placeholder="Enter link here..." onChange={inputAdded} class="border-solid border-2" />
+                            <Input disabled={isFilePicked} placeholder="Enter link here..." onChange={inputAdded} class="border-solid border-2" ></Input>
                         </Col>
-
+                        <Col>
+                            <button onClick={submitUploadLink} disabled={!disableUpload && !isFilePicked} class="focus:outline-none focus:ring-2 focus:ring-offset-2  focus:ring-gray-400 ml-3 bg-gray-200 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border rounded px-8 py-2 text-sm">
+                                Use Link
+                            </button>
+                        </Col>
                     </Space>
                 </Row>
 
             </div>
             <div class="text-center pb-4">
-                <input type="file" onChange={changeHandler} class="" accept=".csv, .xlsx"></input>
+                <input type="file" onChange={changeHandler} class="" accept=".csv, .xlsx" disabled={disableUpload}></input>
             </div>
             <div class="flex justify-center border-solid border-2 p-5">
                 {isFilePicked ? (
