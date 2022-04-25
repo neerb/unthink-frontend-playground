@@ -700,6 +700,12 @@ function PlaygroundPage() {
 
                         {/* Description */}
                         <h3 class="mt-5 text-center">Use dropdowns below to map Unthink Inc's database fields to your uploaded product catalog's columns.</h3>
+                        
+                        <div class = "flex px-5 pb-2 pt-2 justify-between">
+                            <label>Unthink Inc's database fields</label>
+                            <label>Uploaded product catalog's columns</label>
+                        </div>
+                  
 
                         <div class="grid cols-2">
                             { /* Category Drop Down */}
