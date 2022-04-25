@@ -71,10 +71,12 @@ function PlaygroundPage() {
     const [topLevelCounter, setTopLevelCounter] = useState(0); //for top level index counter
 
     const [isDisabled, setIsDisabled] = useState(true) //prop is initially disabled
-    const [textColor, setTextColor] = useState("gray w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2");
+    const [textColor, setTextColor] = useState("gray w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2"); //for text that will get disabled
+    const [submitColor, setSubmitColor] = useState("focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out bg-gray-300 rounded text-white px-8 py-2 text-sm mt-6"); // color of submit button when disabled
     const [uploadSuccess, setUploadSuccess] = useState(false);
     const [statusMessage, setStatusMessage] = useState("Not uploaded");
     const [exampleRecord, setExampleRecord] = useState();
+    const [someUndefined, setSomeUndefined] = useState(true); //initally true because all fields are undefined at first
 
     //const [Separators, setSeparators] = useState(false); //used for submit button to show separators
 
@@ -84,6 +86,19 @@ function PlaygroundPage() {
     var categoryFieldVar;
     var subcategoryFieldVar;
     var topLevelFieldVar;
+    var priceFieldVar;
+    var mfrCodeFieldVar;
+    var nameFieldVar;
+    var descFieldVar;
+    var listPriceFieldVar;
+    var productTypeFieldVar;
+    var imageFieldVar;
+    var urlFieldVar;
+    var currencyFieldVar;
+    var brandFieldVar;
+    var productBrandFieldVar;
+    var availabilityFieldVar;
+    var genderFieldVar;
 
     const parseFile = (file) => {
         if (uploadFile.name.endsWith('.xlsx')) {
@@ -416,8 +431,23 @@ function PlaygroundPage() {
         //console.log("subcategoriesField is " + topLevelCategoryField)
         topLevelFieldVar = topLevelCategoryField;
         //console.log("subcategoryFieldVar is " + topLevelFieldVar)
+        priceFieldVar = priceField;
+        mfrCodeFieldVar = mfrCodeField;
+        nameFieldVar = nameField;
+        descFieldVar = descField;
+        listPriceFieldVar = listPriceField;
+        productTypeFieldVar = productTypeField;
+        imageFieldVar = imageField;
+        urlFieldVar = urlField;
+        currencyFieldVar = currencyField;
+        brandFieldVar = brandField;
+        productBrandFieldVar = productBrandField;
+        availabilityFieldVar = availabilityField;
+        genderFieldVar = genderField;
         isThreeToOne();
-    }, [categoryField, subcategoriesField, topLevelCategoryField]); //will run when categoryField changes
+        isAnyUndefined();
+    
+    }, [categoryField, subcategoriesField, topLevelCategoryField, priceField, mfrCodeField, nameField, descField, listPriceField, productTypeField, imageField, urlField, currencyField, brandField, productBrandField, availabilityField, genderField, someUndefined]); //will run when categoryField changes
 
     function isThreeToOne() {
 
@@ -446,7 +476,38 @@ function PlaygroundPage() {
             setTextColor("w-1/4 text-gray-300 text-sm font-bold leading-tight tracking-normal min-w-fit justify-items-end pr-2"); //light gray text
         }
 
-    }
+    } // end of isThreeToOne
+
+    function isAnyUndefined() {
+        if (typeof categoryFieldVar != 'undefined' &&
+        typeof subcategoryFieldVar != 'undefined' &&
+        typeof topLevelFieldVar != 'undefined' &&
+        typeof priceFieldVar != 'undefined' &&
+        typeof mfrCodeFieldVar != 'undefined' &&
+        typeof nameFieldVar != 'undefined' &&
+        typeof descFieldVar != 'undefined' &&
+        typeof listPriceFieldVar != 'undefined' &&
+        typeof productTypeFieldVar != 'undefined' &&
+        typeof imageFieldVar != 'undefined' &&
+        typeof urlFieldVar != 'undefined' &&
+        typeof currencyFieldVar != 'undefined' &&
+        typeof brandFieldVar != 'undefined' &&
+        typeof productBrandFieldVar != 'undefined' &&
+        typeof availabilityFieldVar != 'undefined' &&
+        typeof genderFieldVar != 'undefined') //if all fields are filled
+        {
+            setSomeUndefined(false); //all fields are filled
+            console.log("someUndefined is " + someUndefined + " all fields are full");
+            setSubmitColor("focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-emerald-700 rounded text-white px-8 py-2 text-sm mt-6"); //green
+        }
+        else
+        {
+            setSomeUndefined(true);
+            console.log("someUndefined is " + someUndefined + " at least one field is undefined");
+            setSubmitColor("focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out bg-gray-300 rounded text-white px-8 py-2 text-sm mt-6"); //gray
+        }
+
+    } // end of isAnyUndefined
 
     const onCategoryFieldChange = (e) => {
         if (e) {
@@ -946,7 +1007,7 @@ function PlaygroundPage() {
 
                         { /* Submit and cancel buttons */}
                         <div class="flex items-center justify-center w-full">
-                            <button onClick={submitButton} class="focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-emerald-700 rounded text-white px-8 py-2 text-sm mt-6">
+                            <button onClick={submitButton} disabled={someUndefined} class={submitColor}>
                                 Submit
                             </button>
                             <button class="focus:outline-none focus:ring-2 focus:ring-offset-2  focus:ring-gray-400 ml-3 bg-gray-100 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border rounded px-8 py-2 text-sm mt-6" onclick="modalHandler()">
