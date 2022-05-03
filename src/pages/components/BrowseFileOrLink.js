@@ -18,8 +18,10 @@ export default function BrowseFileOrLink({ childToParent }) {
             childToParent(event.target.files[0]);
         }
         else {
-            setIsFilePicked(true);
-            setSelectedFile(null);
+            if (!selectedFile) {
+                setIsFilePicked(false);
+                setSelectedFile(null);
+            }
         }
     };
 
@@ -64,7 +66,7 @@ export default function BrowseFileOrLink({ childToParent }) {
                 <input type="file" onChange={changeHandler} class="" accept=".csv, .xlsx" disabled={disableUpload}></input>
             </div>
             <div class="flex justify-center border-solid border-2 p-5">
-                {isFilePicked ? (
+                {selectedFile && isFilePicked ? (
                     <div class="text-center">
                         <p>Filename: <b>{selectedFile.name}</b></p>
                         <p>Filetype: {selectedFile.type}</p>

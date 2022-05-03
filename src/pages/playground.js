@@ -2,7 +2,7 @@ import React, { Component, useState, useRef, useEffect } from 'react'
 import { Menu, Dropdown, Icon, Upload, Divider, Popover } from 'antd'
 import { Link } from 'gatsby'
 import BrowseFileOrLink from './components/BrowseFileOrLink'
-import { Input, Button, Space, Row, Col } from 'antd'
+import { Input, Button, Space, Row, Col, Spin } from 'antd'
 import { UploadOutlined, AppstoreAddOutlined } from '@ant-design/icons'
 import readXlsxFile from 'read-excel-file'
 import { render } from 'react-dom'
@@ -10,9 +10,8 @@ import reactDom from 'react-dom'
 import Papa from 'papaparse'
 const axios = require('axios');
 var csv = require('jquery-csv');
-
-
 const { SubMenu } = Menu;
+const debug = true;
 
 
 const menu = (
@@ -42,7 +41,6 @@ function PlaygroundPage() {
     const [isFileUploaded, setIsFileUploaded] = useState();
     const [uploadErrorMessage, setUploadErrorMessage] = useState("File not uploaded");
     const [successfulFileRead, setSuccessfulFileRead] = useState(false);
-    const [count, setCount] = useState();
     const [categoryField, setCategoryField] = useState();
     const [subcategoriesField, setSubCategoriesField] = useState();
     const [topLevelCategoryField, setTopLevelCategoryField] = useState();
@@ -60,7 +58,6 @@ function PlaygroundPage() {
     const [availabilityField, setAvailabilityField] = useState();
     const [genderField, setGenderField] = useState();
     const [ignoreFieldsList, setIgnoreFieldsList] = useState([]);
-    const [fileFormData, setFileFormData] = useState();
     const [mapFormData, setMapFormData] = useState();
 
     const [categorySeparator, setCategorySeparator] = useState();
@@ -79,6 +76,7 @@ function PlaygroundPage() {
     const [statusMessage, setStatusMessage] = useState("Not uploaded");
     const [exampleRecord, setExampleRecord] = useState();
     const [someUndefined, setSomeUndefined] = useState(true); //initally true because all fields are undefined at first
+    const [isCurrentlyUploading, setIsCurrentlyUploading] = useState(false);
 
     //const [Separators, setSeparators] = useState(false); //used for submit button to show separators
 
@@ -270,8 +268,6 @@ function PlaygroundPage() {
 
     }
 
-    const debug = false
-
     const submitButton = () => {
         /*
             Form Data Creation Here
@@ -294,6 +290,7 @@ function PlaygroundPage() {
 
         if (debug) {
             // For tanishq file
+            /*
             submitFormData.append("file_raw", uploadFile);
             submitFormData.append("name_col", 14);
             submitFormData.append("descr_col", 4);
@@ -318,6 +315,36 @@ function PlaygroundPage() {
             submitFormData.append("ignored_cols", "0,9");
             submitFormData.append("top_level_category_index", 0);
             submitFormData.append("category_index", 1);
+            */
+
+            // For forzieri and perry ellis
+
+            submitFormData.append("file_raw", uploadFile);
+            //submitFormData.append("file_url", "https://utdallas.box.com/shared/static/lobbqzrc7rqb8y918gwzqsw1hmiznd7f.csv");
+            submitFormData.append("name_col", 5);
+            submitFormData.append("descr_col", 6);
+            submitFormData.append("price_col", 15);
+            submitFormData.append("list_price_col", 16);
+            submitFormData.append("top_level_category_col", 23);
+            submitFormData.append("category_col", 2);
+            submitFormData.append("subcategories_col", 23);
+            submitFormData.append("top_level_category_sep", ">");
+            submitFormData.append("category_sep", ">");
+            submitFormData.append("subcategories_sep", ">");
+            submitFormData.append("product_type_col", 23);
+            submitFormData.append("product_type_sep", ">");
+            submitFormData.append("image_col", 8);
+            submitFormData.append("url_col", 7);
+            submitFormData.append("mfr_code_col", 4);
+            submitFormData.append("currency_col", 18);
+            submitFormData.append("brand_col", 25);
+            submitFormData.append("product_brand_col", 25);
+            submitFormData.append("avlble_col", 12);
+            submitFormData.append("gender_col", 36);
+            submitFormData.append("ignored_cols", '');
+            submitFormData.append("top_level_category_index", 0);
+            submitFormData.append("category_index", 0);
+
         }
         else {
             // Required
@@ -388,15 +415,18 @@ function PlaygroundPage() {
                 setStatusMessage(obj[0].status_msg);
                 if (obj[0].status_code == 201) {
                     setUploadSuccess(true);
-                    setExampleRecord(obj[0].data[0]);
-                    console.log(obj[0].data[0]);
+                    setExampleRecord(obj[0].data);
+                    console.log(obj[0].data);
                 }
                 else {
                     setUploadSuccess(false);
                 }
             }
+
+            setIsCurrentlyUploading(false);
         };
         request.send(submitFormData);
+        setIsCurrentlyUploading(true);
     } //end of submit button
 
     React.useEffect(() => {
@@ -592,14 +622,12 @@ function PlaygroundPage() {
 
     const IgnoreFieldInfo = (
         <div>
-            <p>This field is for ...</p>
             <p>Ctrl + click to select multiple values.</p>
         </div>
     );
 
     const IndexInfo = (
         <div>
-            <p>This field is for ...</p>
             <p>Index starts count from 0</p>
         </div>
     );
@@ -989,15 +1017,9 @@ function PlaygroundPage() {
 
                         </div>
 
-
-                        {/*<h1 class="text-gray-800 font-bold tracking-normal leading-tight mb-4 text-lg text-center">Optional fields:</h1>*/}
-
-
-
-
                         { /* Submit and cancel buttons */}
                         <div class="flex items-center justify-center w-full">
-                            <button onClick={submitButton} disabled={someUndefined && !debug} class={submitColor}>
+                            <button onClick={submitButton} disabled={(someUndefined || isCurrentlyUploading) && !debug} class={((someUndefined || isCurrentlyUploading) && !debug) ? "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out bg-gray-300 rounded text-white px-8 py-2 text-sm mt-6" : "focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-700 transition duration-150 ease-in-out hover:bg-indigo-600 bg-emerald-700 rounded text-white px-8 py-2 text-sm mt-6"}>
                                 Submit
                             </button>
                             <button class="focus:outline-none focus:ring-2 focus:ring-offset-2  focus:ring-gray-400 ml-3 bg-gray-100 transition duration-150 text-gray-600 ease-in-out hover:border-gray-400 hover:bg-gray-300 border rounded px-8 py-2 text-sm mt-6" onclick="modalHandler()">
@@ -1007,15 +1029,20 @@ function PlaygroundPage() {
                             </button>
                         </div>
 
+                        { /* Loading spinner (disappears when not loading) */}
+                        <div class="flex items-center justify-center w-full mt-8 mb-4">
+                            <Spin hidden={!isCurrentlyUploading} size="large" tip="Attempting to upload file... please wait (this could take a few minutes)"></Spin>
+                        </div>
+
                         {/* Upload Status */}
-                        <div class="flex items-center justify-center w-full m-4">
+                        <div class="flex items-center justify-center w-full mb-6 mt-0">
                             <label class={"text-center px-2 py-4 w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit "}>Upload Status:</label>
                             <label class={uploadSuccess ? "text-center py-2 px-4 w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit bg-green-500" : "text-center py-2 px-4 w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit bg-red-500"}>{statusMessage}</label>
                         </div>
 
                         {/* Example uploaded record */}
                         <div class="flex items-center justify-center w-full m-4">
-                            <label class={"text-center px-2 py-4 w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit "}>Example Record Upload:</label>
+                            <label class={"text-center px-2 py-4 w-1/4 text-gray-800 text-sm font-bold leading-tight tracking-normal min-w-fit "}>Stored Record Example:</label>
                         </div>
 
                         <div class="flex justify-center w-full m-4">
